@@ -1,4 +1,4 @@
-import type { Book } from "../utils/markdown-parser.js";
+import type { Book } from "../types.js";
 
 export function listCategories(books: Book[]): object {
   const categories = new Map<string, { count: number; books: string[] }>();

@@ -1,66 +1,66 @@
 ---
-title: "Título do Livro"
-author: "Autor"
+title: "Book Title"
+author: "Author"
 year: 2020
 category: "business"
 tags: ["tag1", "tag2", "tag3"]
-language: "pt-BR"
+language: "en"
 isbn: "978-..."
 ---
 
-# Título do Livro
+# Book Title
 
-> **Resumo em uma frase:** Uma frase que captura a essência do livro.
+> **One-sentence summary:** A single sentence that captures the essence of the book.
 
-## Principais Ideias
+## Key Ideas
 
-### 1. Ideia Central 1
+### 1. Core Idea 1
 
-Explicação em 2-3 parágrafos sobre esta ideia. Contextualize o conceito, explique por que é importante e como o autor desenvolve o argumento.
+Explanation in 2-3 paragraphs about this idea. Contextualize the concept, explain why it matters and how the author develops the argument.
 
-Adicione exemplos concretos ou evidências que o autor usa para sustentar esta ideia. Conecte com situações do mundo real.
+Add concrete examples or evidence the author uses to support this idea. Connect with real-world situations.
 
-**Aplicação prática:** Descreva como um leitor pode aplicar essa ideia no dia a dia, no trabalho ou na vida pessoal.
+**Practical application:** Describe how a reader can apply this idea in daily life, at work, or in personal life.
 
-### 2. Ideia Central 2
+### 2. Core Idea 2
 
-Explicação em 2-3 parágrafos.
+Explanation in 2-3 paragraphs.
 
-**Aplicação prática:** Como aplicar essa ideia.
+**Practical application:** How to apply this idea.
 
-### 3. Ideia Central 3
+### 3. Core Idea 3
 
-Explicação em 2-3 parágrafos.
+Explanation in 2-3 paragraphs.
 
-**Aplicação prática:** Como aplicar essa ideia.
+**Practical application:** How to apply this idea.
 
-<!-- Inclua até 7 ideias centrais -->
+<!-- Include up to 7 core ideas -->
 
-## Frameworks e Modelos
+## Frameworks and Models
 
-### Nome do Framework
+### Framework Name
 
-Descrição estruturada do framework, modelo mental ou metodologia que o livro apresenta. Use listas, tabelas ou diagramas ASCII quando apropriado.
+Structured description of the framework, mental model, or methodology the book presents. Use lists, tables, or ASCII diagrams when appropriate.
 
-- **Etapa 1:** Descrição
-- **Etapa 2:** Descrição
-- **Etapa 3:** Descrição
+- **Step 1:** Description
+- **Step 2:** Description
+- **Step 3:** Description
 
-## Citações-Chave
+## Key Quotes
 
-> "Citação relevante 1" — Autor
+> "Relevant quote 1" — Author
 
-> "Citação relevante 2" — Autor
+> "Relevant quote 2" — Author
 
-> "Citação relevante 3" — Autor
+> "Relevant quote 3" — Author
 
-## Conexões com Outros Livros
+## Connections with Other Books
 
-- [[outro-livro]]: Descrição de como este livro se relaciona
-- [[outro-livro-2]]: Descrição de como este livro se relaciona
+- [[other-book]]: Description of how this book relates
+- [[other-book-2]]: Description of how this book relates
 
-## Quando Usar Este Conhecimento
+## When to Use This Knowledge
 
-- Quando o usuário perguntar sobre [tópico]
-- Quando o contexto envolver [situação]
-- Quando alguém precisar de ajuda com [problema]
+- When the user asks about [topic]
+- When the context involves [situation]
+- When someone needs help with [problem]

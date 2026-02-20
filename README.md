@@ -44,7 +44,48 @@ npm run build
 
 ## MCP Server Configuration
 
-### Claude Desktop
+### Remote server (recommended)
+
+The server is deployed on Cloudflare Workers and available at:
+
+```
+https://booksforagents.com/mcp
+```
+
+#### Claude Desktop (remote)
+
+```json
+{
+  "mcpServers": {
+    "books-for-agents": {
+      "type": "streamable-http",
+      "url": "https://booksforagents.com/mcp"
+    }
+  }
+}
+```
+
+#### Claude Code (remote)
+
+```bash
+claude mcp add books-for-agents --transport http https://booksforagents.com/mcp
+```
+
+#### Cursor (remote)
+
+```json
+{
+  "mcpServers": {
+    "books-for-agents": {
+      "url": "https://booksforagents.com/mcp"
+    }
+  }
+}
+```
+
+### Local server (stdio)
+
+#### Claude Desktop
 
 Add to your `claude_desktop_config.json`:
 
@@ -63,13 +104,13 @@ Add to your `claude_desktop_config.json`:
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-### Claude Code
+#### Claude Code
 
 ```bash
 claude mcp add books-for-agents -- npx -y books-for-agents
 ```
 
-### Cursor
+#### Cursor
 
 Add to your project's `.cursor/mcp.json`:
 
@@ -84,7 +125,7 @@ Add to your project's `.cursor/mcp.json`:
 }
 ```
 
-### Local installation (development)
+#### Local development
 
 If you cloned the repository:
 
@@ -165,13 +206,35 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
 4. Run `npm run validate` to check
 5. Open a PR
 
+## Deploy your own
+
+The project deploys to Cloudflare Workers. The book `.md` files are bundled into JSON at build time.
+
+```bash
+git clone https://github.com/danpalmieri/books-for-agents.git
+cd books-for-agents
+npm install
+npm run deploy
+```
+
+This runs `build:data` (generates `generated/books-data.json` from the `.md` files) and then `wrangler deploy`.
+
+For local development of the worker:
+
+```bash
+npm run build:data
+npm run dev:worker
+```
+
 ## Project structure
 
 ```
 books-for-agents/
 ├── src/
-│   ├── index.ts                 # MCP Server
-│   ├── tools/                   # Tools implementation
+│   ├── index.ts                 # Local MCP Server (stdio)
+│   ├── worker.ts                # Cloudflare Worker (remote HTTP)
+│   ├── types.ts                 # Shared types
+│   ├── tools/                   # Tool implementations
 │   └── utils/                   # Parser and search engine
 ├── books/
 │   ├── _template.md             # Template for new books
@@ -179,8 +242,10 @@ books-for-agents/
 │   ├── psychology/
 │   ├── technology/
 │   └── self-improvement/
-└── scripts/
-    └── validate-books.ts        # Book validation
+├── scripts/
+│   ├── build-books-data.ts      # Generates JSON bundle from .md files
+│   └── validate-books.ts        # Book validation
+└── wrangler.toml                # Cloudflare Workers config
 ```
 
 ## Licenses

@@ -1,29 +1,8 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, basename, relative } from "node:path";
 
-export interface BookMetadata {
-  title: string;
-  author: string;
-  year: number;
-  category: string;
-  tags: string[];
-  language: string;
-  isbn: string;
-  slug: string;
-}
-
-export interface Book {
-  metadata: BookMetadata;
-  content: string;
-  oneLiner: string;
-  sections: {
-    ideas: string;
-    frameworks: string;
-    quotes: string;
-    connections: string;
-    whenToUse: string;
-  };
-}
+export type { BookMetadata, Book } from "../types.js";
+import type { Book, BookMetadata } from "../types.js";
 
 function parseFrontmatter(raw: string): Record<string, unknown> {
   const match = raw.match(/^---\n([\s\S]*?)\n---/);

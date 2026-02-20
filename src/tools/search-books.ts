@@ -1,4 +1,4 @@
-import type { Book } from "../utils/markdown-parser.js";
+import type { Book } from "../types.js";
 import type { SearchEngine } from "../utils/search-engine.js";
 
 export interface SearchBooksInput {

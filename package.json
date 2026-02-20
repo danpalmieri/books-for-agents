@@ -9,8 +9,12 @@
   },
   "scripts": {
     "build": "tsc",
+    "build:data": "npx tsx scripts/build-books-data.ts",
+    "build:worker": "npm run build:data && wrangler deploy --dry-run --outdir=dist-worker",
     "start": "node dist/index.js",
     "dev": "tsc --watch",
+    "dev:worker": "npm run build:data && wrangler dev",
+    "deploy": "npm run build:data && wrangler deploy",
     "validate": "bun scripts/validate-books.ts",
     "prepare": "tsc"
   },
@@ -29,8 +33,11 @@
     "@modelcontextprotocol/sdk": "^1.12.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
     "@types/node": "^22.15.0",
-    "typescript": "^5.7.3"
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^4.0.0"
   },
   "files": [
     "dist",
