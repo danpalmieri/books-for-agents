@@ -1,39 +1,39 @@
 # 📚 Books for Agents
 
-Uma knowledge base open source de resumos estruturados de livros, otimizada para consumo por LLMs e agentes de IA via **MCP (Model Context Protocol)**.
+An open source knowledge base of structured book summaries, optimized for consumption by LLMs and AI agents via **MCP (Model Context Protocol)**.
 
-Qualquer agente de IA pode se conectar e buscar conhecimento de livros para enriquecer suas respostas.
+Any AI agent can connect and retrieve book knowledge to enrich its responses.
 
-## Como funciona
+## How it works
 
 ```
-Usuário: "Me ajude a influenciar pessoas no trabalho"
+User: "Help me influence people at work"
     ↓
-Agente consulta Books for Agents via MCP
+Agent queries Books for Agents via MCP
     ↓
-Encontra "Como Fazer Amigos e Influenciar Pessoas"
+Finds "How to Win Friends and Influence People"
     ↓
-Usa o conhecimento estruturado na resposta
+Uses structured knowledge in its response
 ```
 
-## Livros disponíveis
+## Available books
 
-| Categoria | Livros |
-|-----------|--------|
-| **Business** | Como Fazer Amigos e Influenciar Pessoas, The Lean Startup |
-| **Psychology** | Rápido e Devagar, Hábitos Atômicos |
-| **Technology** | O Programador Pragmático, Código Limpo |
-| **Self-Improvement** | Trabalho Focado, Os 7 Hábitos das Pessoas Altamente Eficazes |
+| Category | Books |
+|----------|-------|
+| **Business** | How to Win Friends and Influence People, The Lean Startup |
+| **Psychology** | Thinking Fast and Slow, Atomic Habits |
+| **Technology** | The Pragmatic Programmer, Clean Code |
+| **Self-Improvement** | Deep Work, The 7 Habits of Highly Effective People |
 
-## Instalação
+## Installation
 
-### Via npx (recomendado)
+### Via npx (recommended)
 
 ```bash
 npx books-for-agents
 ```
 
-### Instalação local
+### Local installation
 
 ```bash
 git clone https://github.com/danpalmieri/books-for-agents.git
@@ -42,11 +42,11 @@ npm install
 npm run build
 ```
 
-## Configuração do MCP Server
+## MCP Server Configuration
 
 ### Claude Desktop
 
-Adicione ao seu `claude_desktop_config.json`:
+Add to your `claude_desktop_config.json`:
 
 ```json
 {
@@ -59,7 +59,7 @@ Adicione ao seu `claude_desktop_config.json`:
 }
 ```
 
-**Caminho do arquivo de configuração:**
+**Config file path:**
 - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
 - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
@@ -71,7 +71,7 @@ claude mcp add books-for-agents -- npx -y books-for-agents
 
 ### Cursor
 
-Adicione ao `.cursor/mcp.json` do seu projeto:
+Add to your project's `.cursor/mcp.json`:
 
 ```json
 {
@@ -84,9 +84,9 @@ Adicione ao `.cursor/mcp.json` do seu projeto:
 }
 ```
 
-### Instalação local (desenvolvimento)
+### Local installation (development)
 
-Se clonou o repositório:
+If you cloned the repository:
 
 ```json
 {
@@ -99,15 +99,15 @@ Se clonou o repositório:
 }
 ```
 
-## Tools disponíveis
+## Available tools
 
 ### `search_books`
 
-Busca livros por tema, palavra-chave ou pergunta.
+Search books by topic, keyword, or question.
 
 ```json
 {
-  "query": "como liderar uma equipe",
+  "query": "how to lead a team",
   "category": "business",
   "limit": 3
 }
@@ -115,7 +115,7 @@ Busca livros por tema, palavra-chave ou pergunta.
 
 ### `get_book`
 
-Retorna o resumo completo de um livro.
+Returns the full summary of a book.
 
 ```json
 {
@@ -123,7 +123,7 @@ Retorna o resumo completo de um livro.
 }
 ```
 
-Ou por título:
+Or by title:
 
 ```json
 {
@@ -133,7 +133,7 @@ Ou por título:
 
 ### `get_book_section`
 
-Retorna uma seção específica para economizar tokens.
+Returns a specific section to save tokens.
 
 ```json
 {
@@ -142,54 +142,54 @@ Retorna uma seção específica para economizar tokens.
 }
 ```
 
-Seções disponíveis: `ideias`, `frameworks`, `citacoes`, `conexoes`, `quando-usar`
+Available sections: `ideas`, `frameworks`, `quotes`, `connections`, `when-to-use`
 
 ### `list_categories`
 
-Lista todas as categorias com contagem de livros.
+Lists all categories with book counts.
 
-## Resources MCP
+## MCP Resources
 
-- `books://catalog` — Catálogo completo com metadata de todos os livros
-- `books://{slug}` — Resumo completo de um livro específico
+- `books://catalog` — Full catalog with metadata for all books
+- `books://{slug}` — Full summary of a specific book
 
-## Como contribuir
+## How to contribute
 
-Veja [CONTRIBUTING.md](.github/CONTRIBUTING.md) para guidelines detalhados.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
 
-### Resumo rápido
+### Quick summary
 
-1. Fork o repositório
-2. Copie `books/_template.md` para a categoria correta
-3. Escreva o resumo seguindo o template
-4. Rode `npm run validate` para verificar
-5. Abra um PR
+1. Fork the repository
+2. Copy `books/_template.md` to the correct category
+3. Write the summary following the template
+4. Run `npm run validate` to check
+5. Open a PR
 
-## Estrutura do projeto
+## Project structure
 
 ```
 books-for-agents/
 ├── src/
 │   ├── index.ts                 # MCP Server
-│   ├── tools/                   # Implementação dos tools
-│   └── utils/                   # Parser e search engine
+│   ├── tools/                   # Tools implementation
+│   └── utils/                   # Parser and search engine
 ├── books/
-│   ├── _template.md             # Template para novos livros
+│   ├── _template.md             # Template for new books
 │   ├── business/
 │   ├── psychology/
 │   ├── technology/
 │   └── self-improvement/
 └── scripts/
-    └── validate-books.ts        # Validação dos livros
+    └── validate-books.ts        # Book validation
 ```
 
-## Licenças
+## Licenses
 
-- **Código:** [MIT](LICENSE)
-- **Conteúdo dos livros:** [CC BY-SA 4.0](LICENSE-CONTENT)
+- **Code:** [MIT](LICENSE)
+- **Book content:** [CC BY-SA 4.0](LICENSE-CONTENT)
 
-Os resumos são análises originais e insights estruturados, não cópias de conteúdo protegido.
+The summaries are original analyses and structured insights, not copies of copyrighted content.
 
-## Autor
+## Author
 
 **Daniel Palmieri** — [@danpalmieri](https://github.com/danpalmieri)
