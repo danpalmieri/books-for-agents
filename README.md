@@ -257,4 +257,4 @@ The summaries are original analyses and structured insights, not copies of copyr
 
 ## Author
 
-**Daniel Palmieri** — [@danpalmieri](https://github.com/danpalmieri)
+**Daniel Palmieri** — [@dlpalmieri](https://x.com/dlpalmieri)

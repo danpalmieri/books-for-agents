@@ -69,14 +69,14 @@ const TOOLS = [
   {
     name: "get_book_section",
     description:
-      "Get a specific section of a book summary to save tokens. Sections: ideias, frameworks, citacoes, conexoes, quando-usar.",
+      "Get a specific section of a book summary to save tokens. Sections: ideas, frameworks, quotes, connections, when-to-use.",
     inputSchema: {
       type: "object" as const,
       properties: {
         slug: { type: "string", description: "Book slug (filename without .md)" },
         section: {
           type: "string",
-          enum: ["ideias", "frameworks", "citacoes", "conexoes", "quando-usar"],
+          enum: ["ideas", "frameworks", "quotes", "connections", "when-to-use"],
           description: "Section to retrieve",
         },
       },
@@ -134,7 +134,7 @@ function callTool(name: string, args: Record<string, unknown>) {
     case "get_book":
       return getBook(books, args as { slug?: string; title?: string });
     case "get_book_section":
-      return getBookSection(books, args as { slug: string; section: "ideias" | "frameworks" | "citacoes" | "conexoes" | "quando-usar" });
+      return getBookSection(books, args as { slug: string; section: "ideas" | "frameworks" | "quotes" | "connections" | "when-to-use" });
     case "list_categories":
       return listCategories(books);
     default:

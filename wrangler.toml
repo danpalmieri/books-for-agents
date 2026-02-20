@@ -6,3 +6,6 @@ workers_dev = true
 routes = [
   { pattern = "booksforagents.com", custom_domain = true }
 ]
+
+[assets]
+directory = "./public"

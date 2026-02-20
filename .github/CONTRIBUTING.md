@@ -1,67 +1,68 @@
-# Contribuindo com Books for Agents
+# Contributing to Books for Agents
 
-Obrigado pelo interesse em contribuir! Este guia explica como adicionar novos livros e contribuir com o projeto.
+Thank you for your interest in contributing! This guide explains how to add new books and contribute to the project.
 
-## Adicionando um novo livro
+## Adding a new book
 
-### 1. Escolha um livro
+### 1. Choose a book
 
-- Livros de não-ficção com insights práticos e aplicáveis
-- Livros amplamente reconhecidos e recomendados na área
-- Evite livros muito nichados ou obscuros (pelo menos inicialmente)
+- Non-fiction books with practical and applicable insights
+- Widely recognized and recommended books in their field
+- Avoid very niche or obscure books (at least initially)
 
-### 2. Crie o arquivo
+### 2. Create the file
 
-1. Copie `books/_template.md`
-2. Renomeie para o slug do livro: `nome-do-livro-em-ingles.md`
-3. Coloque na categoria correta dentro de `books/`
+1. Copy `books/_template.md`
+2. Rename it to the book's slug: `book-name-in-english.md`
+3. Place it in the correct category inside `books/`
 
-**Categorias existentes:**
-- `business/` — Negócios, empreendedorismo, gestão
-- `psychology/` — Psicologia, comportamento, economia comportamental
-- `technology/` — Programação, engenharia de software, tecnologia
-- `self-improvement/` — Desenvolvimento pessoal, produtividade
+**Existing categories:**
+- `business/` — Business, entrepreneurship, management
+- `psychology/` — Psychology, behavior, behavioral economics
+- `technology/` — Programming, software engineering, technology
+- `self-improvement/` — Personal development, productivity
 
-Para sugerir uma nova categoria, abra uma issue primeiro.
+To suggest a new category, open an issue first.
 
-### 3. Escreva o resumo
+### 3. Write the summary
 
-**Siga o template rigorosamente.** Cada livro deve conter:
+**Follow the template strictly.** Each book must contain:
 
-- **Frontmatter** com todos os campos obrigatórios (title, author, year, category, tags, language)
-- **Resumo em uma frase** que captura a essência do livro
-- **5-7 Principais Ideias** com 2-3 parágrafos cada e aplicação prática
-- **Frameworks e Modelos** — metodologias e modelos mentais do livro
-- **Citações-Chave** — 3-5 citações relevantes
-- **Conexões com Outros Livros** — referências a outros livros no repositório
-- **Quando Usar Este Conhecimento** — situações em que um agente deveria recorrer a este livro
+- **Frontmatter** with all required fields (title, author, year, category, tags, language)
+- **One-sentence summary** that captures the essence of the book
+- **5-7 Key Ideas** with 2-3 paragraphs each and a **Practical application** for each
+- **Frameworks and Models** — methodologies and mental models from the book
+- **Key Quotes** — 3-5 relevant quotes
+- **Connections with Other Books** — references to other books in the repository using `[[slug]]`
+- **When to Use This Knowledge** — situations where an agent should refer to this book
 
-### 4. Diretrizes de conteúdo
+### 4. Content guidelines
 
-- Escreva em **português brasileiro (pt-BR)**
-- Foque em **insights estruturados e análises originais**, não em reprodução de conteúdo
-- Extraia **frameworks, modelos mentais e aplicações práticas**
-- Mínimo de **50 linhas** de conteúdo não-vazio (excluindo frontmatter)
-- Cada ideia deve ter **aplicação prática** claramente definida
-- As conexões devem referenciar livros que existem no repositório usando `[[slug]]`
+- Write in **English** (the template uses English headings)
+- Existing books in Portuguese are also accepted — the validator and parser support both languages
+- Focus on **structured insights and original analysis**, not content reproduction
+- Extract **frameworks, mental models, and practical applications**
+- Minimum of **50 non-empty lines** of content (excluding frontmatter)
+- Each idea must have a clearly defined **Practical application**
+- Connections should reference books that exist in the repository using `[[slug]]`
 
-### 5. Valide
+### 5. Validate
 
 ```bash
 npm run validate
 ```
 
-O script verifica se o livro segue o template corretamente.
+The script checks if the book follows the template correctly (works with both English and Portuguese headings).
 
-### 6. Abra um PR
+### 6. Open a PR
 
-- Branch: `add/slug-do-livro`
-- Título: `Add: Nome do Livro — Autor`
-- Descrição: breve explicação de por que este livro é relevante
+- Branch: `add/book-slug`
+- Title: `Add: Book Name — Author`
+- Description: brief explanation of why this book is relevant
 
-## Contribuindo com código
+## Contributing code
 
-### Setup de desenvolvimento
+### Development setup
 
 ```bash
 git clone https://github.com/danpalmieri/books-for-agents.git
@@ -70,18 +71,28 @@ npm install
 npm run build
 ```
 
-### Padrões
+### Useful scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run build` | Compile TypeScript (local stdio server) |
+| `npm run build:data` | Generate `books-data.json` from `.md` files (for CF Worker) |
+| `npm run dev:worker` | Run CF Worker locally |
+| `npm run deploy` | Deploy to Cloudflare Workers |
+| `npm run validate` | Validate all books against the template |
+
+### Standards
 
 - TypeScript strict mode
-- Sem dependências externas além do MCP SDK
-- Testes devem passar antes do PR
+- No external dependencies beyond the MCP SDK
+- Tests must pass before the PR
 
-## Código de conduta
+## Code of conduct
 
-- Seja respeitoso e construtivo
-- Resumos devem ser insights originais, não cópia de conteúdo protegido
-- Foque em qualidade sobre quantidade
+- Be respectful and constructive
+- Summaries must be original insights, not copies of copyrighted content
+- Focus on quality over quantity
 
-## Dúvidas?
+## Questions?
 
-Abra uma [issue](https://github.com/danpalmieri/books-for-agents/issues) no repositório.
+Open an [issue](https://github.com/danpalmieri/books-for-agents/issues) in the repository.

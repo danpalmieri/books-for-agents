@@ -6,12 +6,13 @@ import { join, relative } from "node:path";
 const booksDir = join(import.meta.dir, "..", "books");
 
 const REQUIRED_FRONTMATTER = ["title", "author", "year", "category", "tags", "language"];
-const REQUIRED_SECTIONS = [
-  "Principais Ideias",
-  "Frameworks e Modelos",
-  "Citações-Chave",
-  "Conexões com Outros Livros",
-  "Quando Usar Este Conhecimento",
+// Each entry: [English, Portuguese] — accept either language
+const REQUIRED_SECTIONS: [string, string][] = [
+  ["Key Ideas", "Principais Ideias"],
+  ["Frameworks and Models", "Frameworks e Modelos"],
+  ["Key Quotes", "Citações-Chave"],
+  ["Connections with Other Books", "Conexões com Outros Livros"],
+  ["When to Use This Knowledge", "Quando Usar Este Conhecimento"],
 ];
 const VALID_CATEGORIES = ["business", "psychology", "technology", "self-improvement"];
 
@@ -59,15 +60,15 @@ function validateBook(filePath: string): string[] {
     }
   }
 
-  // Check one-liner exists
-  if (!content.includes("**Resumo em uma frase:**")) {
-    errors.push('Missing "Resumo em uma frase" one-liner');
+  // Check one-liner exists (either language)
+  if (!content.includes("**Resumo em uma frase:**") && !content.includes("**One-sentence summary:**")) {
+    errors.push('Missing one-liner ("**One-sentence summary:**" or "**Resumo em uma frase:**")');
   }
 
-  // Check required sections
-  for (const section of REQUIRED_SECTIONS) {
-    if (!content.includes(`## ${section}`)) {
-      errors.push(`Missing section: ## ${section}`);
+  // Check required sections (accept either language)
+  for (const [en, pt] of REQUIRED_SECTIONS) {
+    if (!content.includes(`## ${en}`) && !content.includes(`## ${pt}`)) {
+      errors.push(`Missing section: ## ${en} (or ## ${pt})`);
     }
   }
 
@@ -78,9 +79,9 @@ function validateBook(filePath: string): string[] {
     errors.push(`Content too short: ${lines.length} non-empty lines (minimum: 50)`);
   }
 
-  // Check for at least one "Aplicação prática"
-  if (!content.includes("**Aplicação prática:**")) {
-    errors.push('Missing "Aplicação prática" in at least one idea');
+  // Check for at least one practical application (either language)
+  if (!content.includes("**Aplicação prática:**") && !content.includes("**Practical application:**")) {
+    errors.push('Missing "**Practical application:**" (or "**Aplicação prática:**") in at least one idea');
   }
 
   return errors;

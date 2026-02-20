@@ -56,9 +56,13 @@ function extractSection(content: string, heading: string): string {
   return match ? match[1].trim() : "";
 }
 
+function extractSectionBilingual(content: string, en: string, pt: string): string {
+  return extractSection(content, en) || extractSection(content, pt);
+}
+
 function extractOneLiner(content: string): string {
   const match = content.match(
-    />\s*\*\*Resumo em uma frase:\*\*\s*(.*?)(?:\n|$)/
+    />\s*\*\*(?:Resumo em uma frase|One-sentence summary):\*\*\s*(.*?)(?:\n|$)/
   );
   return match ? match[1].trim() : "";
 }
@@ -87,11 +91,11 @@ export function parseBook(filePath: string): Book {
     content,
     oneLiner: extractOneLiner(content),
     sections: {
-      ideas: extractSection(content, "Principais Ideias"),
-      frameworks: extractSection(content, "Frameworks e Modelos"),
-      quotes: extractSection(content, "Citações-Chave"),
-      connections: extractSection(content, "Conexões com Outros Livros"),
-      whenToUse: extractSection(content, "Quando Usar Este Conhecimento"),
+      ideas: extractSectionBilingual(content, "Key Ideas", "Principais Ideias"),
+      frameworks: extractSectionBilingual(content, "Frameworks and Models", "Frameworks e Modelos"),
+      quotes: extractSectionBilingual(content, "Key Quotes", "Citações-Chave"),
+      connections: extractSectionBilingual(content, "Connections with Other Books", "Conexões com Outros Livros"),
+      whenToUse: extractSectionBilingual(content, "When to Use This Knowledge", "Quando Usar Este Conhecimento"),
     },
   };
 }

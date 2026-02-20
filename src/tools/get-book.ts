@@ -7,15 +7,15 @@ export interface GetBookInput {
 
 export interface GetBookSectionInput {
   slug: string;
-  section: "ideias" | "frameworks" | "citacoes" | "conexoes" | "quando-usar";
+  section: "ideas" | "frameworks" | "quotes" | "connections" | "when-to-use";
 }
 
 const sectionMap: Record<string, keyof Book["sections"]> = {
-  ideias: "ideas",
+  ideas: "ideas",
   frameworks: "frameworks",
-  citacoes: "quotes",
-  conexoes: "connections",
-  "quando-usar": "whenToUse",
+  quotes: "quotes",
+  connections: "connections",
+  "when-to-use": "whenToUse",
 };
 
 export function getBook(books: Book[], input: GetBookInput): object {

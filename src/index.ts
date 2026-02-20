@@ -64,11 +64,11 @@ server.tool(
 
 server.tool(
   "get_book_section",
-  "Get a specific section of a book summary to save tokens. Sections: ideias, frameworks, citacoes, conexoes, quando-usar.",
+  "Get a specific section of a book summary to save tokens. Sections: ideas, frameworks, quotes, connections, when-to-use.",
   {
     slug: z.string().describe("Book slug (filename without .md)"),
     section: z
-      .enum(["ideias", "frameworks", "citacoes", "conexoes", "quando-usar"])
+      .enum(["ideas", "frameworks", "quotes", "connections", "when-to-use"])
       .describe("Section to retrieve"),
   },
   async (input) => {
