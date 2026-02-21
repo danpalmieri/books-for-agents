@@ -206,6 +206,17 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
 4. Run `npm run validate` to check
 5. Open a PR
 
+### Donate Your Tokens
+
+You can also contribute by donating token processing to generate summaries from the [backlog](books/backlog.yml) using your own Anthropic API key:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+npm run generate -- --pick
+```
+
+This picks the next pending book, generates a summary using Claude, and validates it automatically. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for details.
+
 ## Deploy your own
 
 The project deploys to Cloudflare Workers. The book `.md` files are bundled into JSON at build time.
@@ -238,13 +249,17 @@ books-for-agents/
 │   └── utils/                   # Parser and search engine
 ├── books/
 │   ├── _template.md             # Template for new books
+│   ├── backlog.yml              # Books pending generation
 │   ├── business/
 │   ├── psychology/
 │   ├── technology/
 │   └── self-improvement/
 ├── scripts/
 │   ├── build-books-data.ts      # Generates JSON bundle from .md files
-│   └── validate-books.ts        # Book validation
+│   ├── validate-books.ts        # Book validation
+│   ├── generate-book.ts         # AI-powered book summary generator
+│   └── prompts/
+│       └── generate-summary.ts  # Prompt builder for generation
 └── wrangler.toml                # Cloudflare Workers config
 ```
 

@@ -1,0 +1,198 @@
+books:
+  - title: "The Power of Habit"
+    author: "Charles Duhigg"
+    year: 2012
+    category: "psychology"
+    tags: ["habits", "neuroscience", "behavioral change", "willpower"]
+    isbn: "978-0812981605"
+    status: pending
+    contributor: null
+
+  - title: "Influence: The Psychology of Persuasion"
+    author: "Robert B. Cialdini"
+    year: 1984
+    category: "psychology"
+    tags: ["persuasion", "psychology", "marketing", "negotiation"]
+    isbn: "978-0062937650"
+    status: pending
+    contributor: null
+
+  - title: "Never Split the Difference"
+    author: "Chris Voss"
+    year: 2016
+    category: "business"
+    tags: ["negotiation", "communication", "FBI", "empathy"]
+    isbn: "978-0062407801"
+    status: pending
+    contributor: null
+
+  - title: "Emotional Intelligence"
+    author: "Daniel Goleman"
+    year: 1995
+    category: "psychology"
+    tags: ["emotional intelligence", "neuroscience", "leadership", "self-awareness"]
+    isbn: "978-0553383713"
+    status: pending
+    contributor: null
+
+  - title: "Crucial Conversations"
+    author: "Kerry Patterson, Joseph Grenny, Ron McMillan, Al Switzler"
+    year: 2002
+    category: "business"
+    tags: ["communication", "conflict resolution", "leadership", "dialogue"]
+    isbn: "978-1260474183"
+    status: pending
+    contributor: null
+
+  - title: "Nudge"
+    author: "Richard H. Thaler, Cass R. Sunstein"
+    year: 2008
+    category: "psychology"
+    tags: ["behavioral economics", "decision making", "choice architecture", "public policy"]
+    isbn: "978-0143115267"
+    status: pending
+    contributor: null
+
+  - title: "The Signal and the Noise"
+    author: "Nate Silver"
+    year: 2012
+    category: "business"
+    tags: ["prediction", "statistics", "probability", "data analysis"]
+    isbn: "978-0143125082"
+    status: pending
+    contributor: null
+
+  - title: "Antifragile"
+    author: "Nassim Nicholas Taleb"
+    year: 2012
+    category: "business"
+    tags: ["risk", "uncertainty", "resilience", "systems thinking"]
+    isbn: "978-0812979688"
+    status: pending
+    contributor: null
+
+  - title: "The Undoing Project"
+    author: "Michael Lewis"
+    year: 2016
+    category: "psychology"
+    tags: ["behavioral economics", "cognitive bias", "Kahneman", "Tversky"]
+    isbn: "978-0393354775"
+    status: pending
+    contributor: null
+
+  - title: "Refactoring"
+    author: "Martin Fowler"
+    year: 2018
+    category: "technology"
+    tags: ["refactoring", "software design", "code quality", "patterns"]
+    isbn: "978-0134757599"
+    status: pending
+    contributor: null
+
+  - title: "Design Patterns"
+    author: "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides"
+    year: 1994
+    category: "technology"
+    tags: ["design patterns", "object-oriented", "software architecture", "GoF"]
+    isbn: "978-0201633610"
+    status: pending
+    contributor: null
+
+  - title: "The Mythical Man-Month"
+    author: "Frederick P. Brooks Jr."
+    year: 1975
+    category: "technology"
+    tags: ["project management", "software engineering", "teams", "complexity"]
+    isbn: "978-0201835953"
+    status: pending
+    contributor: null
+
+  - title: "Clean Architecture"
+    author: "Robert C. Martin"
+    year: 2017
+    category: "technology"
+    tags: ["architecture", "software design", "SOLID", "clean code"]
+    isbn: "978-0134494166"
+    status: pending
+    contributor: null
+
+  - title: "The Innovator's Dilemma"
+    author: "Clayton M. Christensen"
+    year: 1997
+    category: "business"
+    tags: ["innovation", "disruption", "strategy", "technology"]
+    isbn: "978-0062060242"
+    status: pending
+    contributor: null
+
+  - title: "Zero to One"
+    author: "Peter Thiel, Blake Masters"
+    year: 2014
+    category: "business"
+    tags: ["startups", "innovation", "monopoly", "venture capital"]
+    isbn: "978-0804139298"
+    status: pending
+    contributor: null
+
+  - title: "Crossing the Chasm"
+    author: "Geoffrey A. Moore"
+    year: 1991
+    category: "business"
+    tags: ["marketing", "technology adoption", "startups", "go-to-market"]
+    isbn: "978-0062292988"
+    status: pending
+    contributor: null
+
+  - title: "Good to Great"
+    author: "Jim Collins"
+    year: 2001
+    category: "business"
+    tags: ["leadership", "management", "strategy", "organizational culture"]
+    isbn: "978-0066620992"
+    status: pending
+    contributor: null
+
+  - title: "Test Driven Development"
+    author: "Kent Beck"
+    year: 2002
+    category: "technology"
+    tags: ["TDD", "testing", "agile", "software development"]
+    isbn: "978-0321146533"
+    status: pending
+    contributor: null
+
+  - title: "Working Effectively with Legacy Code"
+    author: "Michael Feathers"
+    year: 2004
+    category: "technology"
+    tags: ["legacy code", "refactoring", "testing", "software maintenance"]
+    isbn: "978-0131177055"
+    status: pending
+    contributor: null
+
+  - title: "Ego Is the Enemy"
+    author: "Ryan Holiday"
+    year: 2016
+    category: "self-improvement"
+    tags: ["stoicism", "ego", "humility", "self-awareness"]
+    isbn: "978-1591847816"
+    status: pending
+    contributor: null
+
+  - title: "Essentialism"
+    author: "Greg McKeown"
+    year: 2014
+    category: "self-improvement"
+    tags: ["focus", "minimalism", "productivity", "prioritization"]
+    isbn: "978-0804137386"
+    status: pending
+    contributor: null
+
+  - title: "Flow"
+    author: "Mihaly Csikszentmihalyi"
+    year: 1990
+    category: "psychology"
+    tags: ["flow state", "happiness", "peak performance", "psychology"]
+    isbn: "978-0061339202"
+    status: pending
+    contributor: null

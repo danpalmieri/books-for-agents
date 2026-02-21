@@ -60,6 +60,42 @@ The script checks if the book follows the template correctly (works with both En
 - Title: `Add: Book Name — Author`
 - Description: brief explanation of why this book is relevant
 
+## Generate with AI (Donate Your Tokens)
+
+You can contribute by donating token processing to generate book summaries from the backlog:
+
+1. Clone the repo and install dependencies:
+   ```bash
+   git clone https://github.com/danpalmieri/books-for-agents.git
+   cd books-for-agents
+   npm install
+   ```
+2. Set your Anthropic API key:
+   ```bash
+   export ANTHROPIC_API_KEY=sk-ant-...
+   ```
+3. Generate the next pending book:
+   ```bash
+   npm run generate -- --pick
+   ```
+   Or generate a specific book:
+   ```bash
+   npm run generate -- "The Power of Habit"
+   ```
+4. Preview cost without calling the API:
+   ```bash
+   npm run generate -- --pick --dry-run
+   ```
+5. Review the generated file in `books/{category}/` and make manual adjustments if needed
+6. Validate and open a PR following the usual process:
+   ```bash
+   npm run validate
+   npm run build:data
+   git checkout -b add/book-slug
+   ```
+
+**Estimated cost per book:** ~$0.12 (Sonnet), ~$0.36 with retries.
+
 ## Contributing code
 
 ### Development setup
@@ -80,6 +116,7 @@ npm run build
 | `npm run dev:worker` | Run CF Worker locally |
 | `npm run deploy` | Deploy to Cloudflare Workers |
 | `npm run validate` | Validate all books against the template |
+| `npm run generate` | Generate a book summary using Claude AI |
 
 ### Standards
 

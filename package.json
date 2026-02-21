@@ -1,7 +1,7 @@
 {
   "name": "books-for-agents",
   "version": "1.0.0",
-  "description": "Open source knowledge base of structured book summaries optimized for LLMs and AI agents via MCP",
+  "description": "Open source book summaries optimized for AI agents, served via MCP.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -16,6 +16,7 @@
     "dev:worker": "npm run build:data && wrangler dev",
     "deploy": "npm run build:data && wrangler deploy",
     "validate": "bun scripts/validate-books.ts",
+    "generate": "npx tsx scripts/generate-book.ts",
     "prepare": "tsc"
   },
   "keywords": [
@@ -30,7 +31,9 @@
   "author": "Daniel Palmieri",
   "license": "MIT",
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1"
+    "@anthropic-ai/sdk": "^0.78.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "yaml": "^2.8.2"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",

@@ -1,9 +1,11 @@
 #!/usr/bin/env bun
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const booksDir = join(import.meta.dir, "..", "books");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const booksDir = join(__dirname, "..", "books");
 
 const REQUIRED_FRONTMATTER = ["title", "author", "year", "category", "tags", "language"];
 // Each entry: [English, Portuguese] — accept either language
@@ -34,7 +36,7 @@ function parseFrontmatter(content: string): Record<string, string> | null {
   return fm;
 }
 
-function validateBook(filePath: string): string[] {
+export function validateBook(filePath: string): string[] {
   const errors: string[] = [];
   const content = readFileSync(filePath, "utf-8");
 
@@ -135,4 +137,12 @@ function main() {
   }
 }
 
-main();
+// Run main() only when executed directly (not when imported)
+const isMainModule =
+  process.argv[1] &&
+  (process.argv[1].endsWith("validate-books.ts") ||
+    process.argv[1].endsWith("validate-books.js"));
+
+if (isMainModule) {
+  main();
+}
