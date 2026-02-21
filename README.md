@@ -25,53 +25,37 @@ Uses structured knowledge in its response
 | **Technology** | The Pragmatic Programmer, Clean Code |
 | **Self-Improvement** | Deep Work, The 7 Habits of Highly Effective People |
 
+**8 books available** + [22 in the backlog](books/backlog.yml) waiting for contributors.
+
 ## Installation
-
-### Via npx (recommended)
-
-```bash
-npx books-for-agents
-```
-
-### Local installation
-
-```bash
-git clone https://github.com/danpalmieri/books-for-agents.git
-cd books-for-agents
-npm install
-npm run build
-```
-
-## MCP Server Configuration
 
 ### Remote server (recommended)
 
-The server is deployed on Cloudflare Workers and available at:
+No install needed. The server is deployed on Cloudflare Workers:
 
 ```
 https://booksforagents.com/mcp
 ```
 
-#### Claude Desktop (remote)
+### Claude Desktop
 
 ```json
 {
   "mcpServers": {
     "books-for-agents": {
-      "type": "streamable-http",
       "url": "https://booksforagents.com/mcp"
     }
   }
 }
 ```
 
-#### Claude Code (remote)
+### Claude Code
 
 ```bash
 claude mcp add books-for-agents --transport http https://booksforagents.com/mcp
 ```
 
-#### Cursor (remote)
+### Cursor
 
 ```json
 {
@@ -85,34 +69,21 @@ claude mcp add books-for-agents --transport http https://booksforagents.com/mcp
 
 ### Local server (stdio)
 
-#### Claude Desktop
-
-Add to your `claude_desktop_config.json`:
-
-```json
-{
-  "mcpServers": {
-    "books-for-agents": {
-      "command": "npx",
-      "args": ["-y", "books-for-agents"]
-    }
-  }
-}
-```
-
-**Config file path:**
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-
-#### Claude Code
+For local development or offline use:
 
 ```bash
-claude mcp add books-for-agents -- npx -y books-for-agents
+npx books-for-agents
 ```
 
-#### Cursor
+Or clone and build:
 
-Add to your project's `.cursor/mcp.json`:
+```bash
+git clone https://github.com/danpalmieri/books-for-agents.git
+cd books-for-agents
+npm install && npm run build
+```
+
+Then add to your MCP client config:
 
 ```json
 {
@@ -120,21 +91,6 @@ Add to your project's `.cursor/mcp.json`:
     "books-for-agents": {
       "command": "npx",
       "args": ["-y", "books-for-agents"]
-    }
-  }
-}
-```
-
-#### Local development
-
-If you cloned the repository:
-
-```json
-{
-  "mcpServers": {
-    "books-for-agents": {
-      "command": "node",
-      "args": ["dist/index.js"]
     }
   }
 }
@@ -142,82 +98,22 @@ If you cloned the repository:
 
 ## Available tools
 
-### `search_books`
+### Reading
 
-Search books by topic, keyword, or question.
+| Tool | Description |
+|------|-------------|
+| `search_books` | Search by topic, keyword, or question. Supports category filtering. |
+| `get_book` | Get full summary by slug or title (partial match). |
+| `get_book_section` | Get a specific section (`ideas`, `frameworks`, `quotes`, `connections`, `when-to-use`) to save tokens. |
+| `list_categories` | List all categories with book counts. |
 
-```json
-{
-  "query": "how to lead a team",
-  "category": "business",
-  "limit": 3
-}
-```
+### Contributing
 
-### `get_book`
-
-Returns the full summary of a book.
-
-```json
-{
-  "slug": "how-to-win-friends-and-influence-people"
-}
-```
-
-Or by title:
-
-```json
-{
-  "title": "Lean Startup"
-}
-```
-
-### `get_book_section`
-
-Returns a specific section to save tokens.
-
-```json
-{
-  "slug": "atomic-habits",
-  "section": "frameworks"
-}
-```
-
-Available sections: `ideas`, `frameworks`, `quotes`, `connections`, `when-to-use`
-
-### `list_categories`
-
-Lists all categories with book counts.
-
-### `list_backlog`
-
-Lists all books in the generation backlog with their status.
-
-### `generate_book`
-
-Get the full context (template, example, instructions) to generate a book summary. The agent generates the content using its own tokens.
-
-```json
-{
-  "title": "The Power of Habit"
-}
-```
-
-Omit `title` to pick the next pending book automatically.
-
-### `submit_book`
-
-Submit a generated book summary as a GitHub Issue for review.
-
-```json
-{
-  "slug": "the-power-of-habit",
-  "title": "The Power of Habit",
-  "author": "Charles Duhigg",
-  "category": "psychology",
-  "content": "---\ntitle: \"The Power of Habit\"\n..."
-}
-```
+| Tool | Description |
+|------|-------------|
+| `list_backlog` | See all pending books and their status. |
+| `generate_book` | Get template, example, and metadata to generate the next book summary. |
+| `submit_book` | Submit a generated summary as a GitHub Issue for review. |
 
 ## MCP Resources
 
@@ -228,7 +124,15 @@ Submit a generated book summary as a GitHub Issue for review.
 
 See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
 
-### Quick summary
+### Donate Your Tokens
+
+If you already have Books for Agents connected to your agent, just ask:
+
+> "Generate the next book from the backlog"
+
+Your agent will call `generate_book` to get the context, generate the summary with its own tokens, and `submit_book` to create a GitHub Issue automatically. No cloning or setup needed.
+
+### Write manually
 
 1. Fork the repository
 2. Copy `books/_template.md` to the correct category
@@ -236,17 +140,9 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
 4. Run `npm run validate` to check
 5. Open a PR
 
-### Donate Your Tokens
-
-If you already have Books for Agents connected to your agent, just ask:
-
-> "Generate the next book from the backlog"
-
-Your agent will use the `generate_book` and `submit_book` MCP tools to create a summary and submit it as a GitHub Issue — no cloning or setup needed. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for details.
-
 ## Deploy your own
 
-The project deploys to Cloudflare Workers. The book `.md` files are bundled into JSON at build time.
+The project deploys to Cloudflare Workers. Book `.md` files are bundled into JSON at build time.
 
 ```bash
 git clone https://github.com/danpalmieri/books-for-agents.git
@@ -255,9 +151,13 @@ npm install
 npm run deploy
 ```
 
-This runs `build:data` (generates `generated/books-data.json` from the `.md` files) and then `wrangler deploy`.
+For the `submit_book` tool to work, configure the GitHub token:
 
-For local development of the worker:
+```bash
+npx wrangler secret put GITHUB_TOKEN
+```
+
+For local development:
 
 ```bash
 npm run build:data
@@ -269,25 +169,32 @@ npm run dev:worker
 ```
 books-for-agents/
 ├── src/
-│   ├── index.ts                 # Local MCP Server (stdio)
-│   ├── worker.ts                # Cloudflare Worker (remote HTTP)
-│   ├── types.ts                 # Shared types
-│   ├── tools/                   # Tool implementations
-│   └── utils/                   # Parser and search engine
+│   ├── index.ts                    # Local MCP Server (stdio)
+│   ├── worker.ts                   # Cloudflare Worker (remote HTTP)
+│   ├── types.ts                    # Shared types
+│   ├── tools/
+│   │   ├── search-books.ts         # Search with TF-IDF scoring
+│   │   ├── get-book.ts             # Book retrieval by slug/title
+│   │   ├── list-categories.ts      # Category aggregation
+│   │   ├── generate-book.ts        # Generation context + backlog
+│   │   └── submit-book.ts          # GitHub Issue submission
+│   └── utils/
+│       ├── markdown-parser.ts      # Book file parsing
+│       └── search-engine.ts        # TF-IDF search engine
 ├── books/
-│   ├── _template.md             # Template for new books
-│   ├── backlog.yml              # Books pending generation
+│   ├── _template.md                # Template for new books
+│   ├── backlog.yml                 # 22 books pending generation
 │   ├── business/
 │   ├── psychology/
 │   ├── technology/
 │   └── self-improvement/
 ├── scripts/
-│   ├── build-books-data.ts      # Generates JSON bundle from .md files
-│   ├── validate-books.ts        # Book validation
-│   ├── generate-book.ts         # AI-powered book summary generator
+│   ├── build-books-data.ts         # Bundles books + backlog into JSON
+│   ├── validate-books.ts           # Book validation
+│   ├── generate-book.ts            # CLI for local generation
 │   └── prompts/
-│       └── generate-summary.ts  # Prompt builder for generation
-└── wrangler.toml                # Cloudflare Workers config
+│       └── generate-summary.ts     # Prompt builder for CLI
+└── wrangler.toml                   # Cloudflare Workers config
 ```
 
 ## Licenses
