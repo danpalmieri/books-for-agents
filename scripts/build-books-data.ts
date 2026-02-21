@@ -5,9 +5,10 @@
  * Run with: npx tsx scripts/build-books-data.ts
  */
 
-import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, readdirSync, statSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, basename, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
+import { parse as parseYaml } from "yaml";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -127,3 +128,25 @@ for (const cat of categories) {
 
 writeFileSync(outFile, JSON.stringify(books, null, 2));
 console.log(`Generated ${outFile} (${books.length} books, ${(statSync(outFile).size / 1024).toFixed(0)}KB)`);
+
+// --- Generation data (backlog + template + example) ---
+
+const genDataFile = join(outDir, "generation-data.json");
+
+const backlogPath = join(booksDir, "backlog.yml");
+const templatePath = join(booksDir, "_template.md");
+const examplePath = join(booksDir, "psychology", "atomic-habits.md");
+
+if (existsSync(backlogPath) && existsSync(templatePath) && existsSync(examplePath)) {
+  const backlogRaw = readFileSync(backlogPath, "utf-8");
+  const backlog = parseYaml(backlogRaw);
+
+  const generationData = {
+    backlog: backlog.books,
+    template: readFileSync(templatePath, "utf-8"),
+    example: readFileSync(examplePath, "utf-8"),
+  };
+
+  writeFileSync(genDataFile, JSON.stringify(generationData, null, 2));
+  console.log(`Generated ${genDataFile} (${backlog.books.length} backlog entries, ${(statSync(genDataFile).size / 1024).toFixed(0)}KB)`);
+}

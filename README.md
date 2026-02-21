@@ -189,6 +189,36 @@ Available sections: `ideas`, `frameworks`, `quotes`, `connections`, `when-to-use
 
 Lists all categories with book counts.
 
+### `list_backlog`
+
+Lists all books in the generation backlog with their status.
+
+### `generate_book`
+
+Get the full context (template, example, instructions) to generate a book summary. The agent generates the content using its own tokens.
+
+```json
+{
+  "title": "The Power of Habit"
+}
+```
+
+Omit `title` to pick the next pending book automatically.
+
+### `submit_book`
+
+Submit a generated book summary as a GitHub Issue for review.
+
+```json
+{
+  "slug": "the-power-of-habit",
+  "title": "The Power of Habit",
+  "author": "Charles Duhigg",
+  "category": "psychology",
+  "content": "---\ntitle: \"The Power of Habit\"\n..."
+}
+```
+
 ## MCP Resources
 
 - `books://catalog` — Full catalog with metadata for all books
@@ -208,14 +238,11 @@ See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
 
 ### Donate Your Tokens
 
-You can also contribute by donating token processing to generate summaries from the [backlog](books/backlog.yml) using your own Anthropic API key:
+If you already have Books for Agents connected to your agent, just ask:
 
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-npm run generate -- --pick
-```
+> "Generate the next book from the backlog"
 
-This picks the next pending book, generates a summary using Claude, and validates it automatically. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for details.
+Your agent will use the `generate_book` and `submit_book` MCP tools to create a summary and submit it as a GitHub Issue — no cloning or setup needed. See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for details.
 
 ## Deploy your own
 

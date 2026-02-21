@@ -7,9 +7,13 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { loadAllBooks } from "./utils/markdown-parser.js";
 import { SearchEngine } from "./utils/search-engine.js";
+import { readFileSync } from "node:fs";
+import { parse as parseYaml } from "yaml";
 import { searchBooks } from "./tools/search-books.js";
 import { getBook, getBookSection } from "./tools/get-book.js";
 import { listCategories } from "./tools/list-categories.js";
+import { generateBook, listBacklog, type BacklogEntry } from "./tools/generate-book.js";
+import { submitBook } from "./tools/submit-book.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,6 +24,12 @@ const booksDir = join(__dirname, "..", "books");
 const books = loadAllBooks(booksDir);
 const engine = new SearchEngine();
 engine.index(books);
+
+// Load generation data
+const backlogRaw = readFileSync(join(booksDir, "backlog.yml"), "utf-8");
+const backlog: BacklogEntry[] = parseYaml(backlogRaw).books;
+const template = readFileSync(join(booksDir, "_template.md"), "utf-8");
+const example = readFileSync(join(booksDir, "psychology", "atomic-habits.md"), "utf-8");
 
 // Create MCP Server
 const server = new McpServer({
@@ -83,6 +93,48 @@ server.tool(
   {},
   async () => {
     const result = listCategories(books);
+    return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+  }
+);
+
+server.tool(
+  "list_backlog",
+  "List all books in the generation backlog with their status (pending, done, skipped). Shows which books are available for contributors to generate.",
+  {},
+  async () => {
+    const result = listBacklog(backlog);
+    return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+  }
+);
+
+server.tool(
+  "generate_book",
+  "Get the full context (template, example, metadata, instructions) to generate a book summary. The agent generates the content using its own tokens, then calls submit_book to submit it.",
+  {
+    title: z
+      .string()
+      .optional()
+      .describe("Book title from the backlog (omit to pick the next pending book)"),
+  },
+  async (input) => {
+    const result = generateBook(books, backlog, template, example, input);
+    return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+  }
+);
+
+server.tool(
+  "submit_book",
+  "Submit a generated book summary as a GitHub Issue for review. Call this after generating content with generate_book.",
+  {
+    slug: z.string().describe("Book slug (e.g. the-power-of-habit)"),
+    title: z.string().describe("Book title"),
+    author: z.string().describe("Book author"),
+    category: z.string().describe("Book category (business, psychology, technology, self-improvement)"),
+    content: z.string().describe("The full generated markdown content (starting with --- frontmatter)"),
+  },
+  async (input) => {
+    const githubToken = process.env.GITHUB_TOKEN || "";
+    const result = await submitBook(input, githubToken);
     return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
   }
 );

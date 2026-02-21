@@ -62,39 +62,36 @@ The script checks if the book follows the template correctly (works with both En
 
 ## Generate with AI (Donate Your Tokens)
 
-You can contribute by donating token processing to generate book summaries from the backlog:
+You can contribute by donating token processing to generate book summaries. If you already have Books for Agents connected to your AI agent, just ask:
 
-1. Clone the repo and install dependencies:
-   ```bash
-   git clone https://github.com/danpalmieri/books-for-agents.git
-   cd books-for-agents
-   npm install
-   ```
-2. Set your Anthropic API key:
-   ```bash
-   export ANTHROPIC_API_KEY=sk-ant-...
-   ```
-3. Generate the next pending book:
-   ```bash
-   npm run generate -- --pick
-   ```
-   Or generate a specific book:
-   ```bash
-   npm run generate -- "The Power of Habit"
-   ```
-4. Preview cost without calling the API:
-   ```bash
-   npm run generate -- --pick --dry-run
-   ```
-5. Review the generated file in `books/{category}/` and make manual adjustments if needed
-6. Validate and open a PR following the usual process:
-   ```bash
-   npm run validate
-   npm run build:data
-   git checkout -b add/book-slug
-   ```
+> "Generate the next book from the backlog"
 
-**Estimated cost per book:** ~$0.12 (Sonnet), ~$0.36 with retries.
+Your agent will:
+1. Call `list_backlog` to see pending books
+2. Call `generate_book` to get the template, example, and metadata
+3. Generate the summary using its own tokens
+4. Call `submit_book` to submit it as a GitHub Issue for review
+
+That's it — no cloning, no setup, no API keys needed.
+
+### Available MCP tools
+
+| Tool | Description |
+|------|-------------|
+| `list_backlog` | See all pending books and their status |
+| `generate_book` | Get context to generate a specific book (or the next pending one) |
+| `submit_book` | Submit the generated summary as a GitHub Issue |
+
+### Alternative: CLI workflow
+
+You can also generate books locally using the CLI:
+
+```bash
+git clone https://github.com/danpalmieri/books-for-agents.git
+cd books-for-agents && npm install
+export ANTHROPIC_API_KEY=sk-ant-...
+npm run generate -- --pick
+```
 
 ## Contributing code
 

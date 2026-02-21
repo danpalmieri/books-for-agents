@@ -5,16 +5,27 @@
 
 import type { Book } from "./types.js";
 import booksData from "../generated/books-data.json";
+import generationData from "../generated/generation-data.json";
 import { SearchEngine } from "./utils/search-engine.js";
 import { searchBooks } from "./tools/search-books.js";
 import { getBook, getBookSection } from "./tools/get-book.js";
 import { listCategories } from "./tools/list-categories.js";
+import { generateBook, listBacklog, type BacklogEntry } from "./tools/generate-book.js";
+import { submitBook } from "./tools/submit-book.js";
+
+interface Env {
+  GITHUB_TOKEN?: string;
+}
 
 // --- Init ---
 
 const books: Book[] = booksData as unknown as Book[];
 const engine = new SearchEngine();
 engine.index(books);
+
+const backlog: BacklogEntry[] = generationData.backlog as unknown as BacklogEntry[];
+const genTemplate: string = generationData.template;
+const genExample: string = generationData.example;
 
 // --- CORS ---
 
@@ -88,6 +99,48 @@ const TOOLS = [
     description: "List all available book categories with book counts.",
     inputSchema: { type: "object" as const, properties: {} },
   },
+  {
+    name: "list_backlog",
+    description:
+      "List all books in the generation backlog with their status (pending, done, skipped). Shows which books are available for contributors to generate.",
+    inputSchema: { type: "object" as const, properties: {} },
+  },
+  {
+    name: "generate_book",
+    description:
+      "Get the full context (template, example, metadata, instructions) to generate a book summary. The agent generates the content using its own tokens, then calls submit_book to submit it.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        title: {
+          type: "string",
+          description: "Book title from the backlog (omit to pick the next pending book)",
+        },
+      },
+    },
+  },
+  {
+    name: "submit_book",
+    description:
+      "Submit a generated book summary as a GitHub Issue for review. Call this after generating content with generate_book.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        slug: { type: "string", description: "Book slug (e.g. the-power-of-habit)" },
+        title: { type: "string", description: "Book title" },
+        author: { type: "string", description: "Book author" },
+        category: {
+          type: "string",
+          description: "Book category (business, psychology, technology, self-improvement)",
+        },
+        content: {
+          type: "string",
+          description: "The full generated markdown content (starting with --- frontmatter)",
+        },
+      },
+      required: ["slug", "title", "author", "category", "content"],
+    },
+  },
 ];
 
 // --- MCP Resource Definitions ---
@@ -127,7 +180,7 @@ function readResource(uri: string) {
 
 // --- Tool Execution ---
 
-function callTool(name: string, args: Record<string, unknown>) {
+function callTool(name: string, args: Record<string, unknown>, env: Env) {
   switch (name) {
     case "search_books":
       return searchBooks(engine, args as { query: string; category?: string; limit?: number });
@@ -137,6 +190,15 @@ function callTool(name: string, args: Record<string, unknown>) {
       return getBookSection(books, args as { slug: string; section: "ideas" | "frameworks" | "quotes" | "connections" | "when-to-use" });
     case "list_categories":
       return listCategories(books);
+    case "list_backlog":
+      return listBacklog(backlog);
+    case "generate_book":
+      return generateBook(books, backlog, genTemplate, genExample, args as { title?: string });
+    case "submit_book":
+      return submitBook(
+        args as { slug: string; title: string; author: string; category: string; content: string },
+        env.GITHUB_TOKEN || ""
+      );
     default:
       return null;
   }
@@ -158,7 +220,7 @@ interface JsonRpcResponse {
   error?: { code: number; message: string; data?: unknown };
 }
 
-function handleMessage(msg: JsonRpcRequest): JsonRpcResponse | null {
+async function handleMessage(msg: JsonRpcRequest, env: Env): Promise<JsonRpcResponse | null> {
   // Notifications (no id) don't get responses
   if (msg.id === undefined || msg.id === null) return null;
 
@@ -194,7 +256,7 @@ function handleMessage(msg: JsonRpcRequest): JsonRpcResponse | null {
     case "tools/call": {
       const toolName = msg.params?.name as string;
       const toolArgs = (msg.params?.arguments ?? {}) as Record<string, unknown>;
-      const result = callTool(toolName, toolArgs);
+      const result = await callTool(toolName, toolArgs, env);
       if (result === null) {
         return error(-32602, `Unknown tool: ${toolName}`);
       }
@@ -220,7 +282,7 @@ function handleMessage(msg: JsonRpcRequest): JsonRpcResponse | null {
 // --- Fetch Handler ---
 
 export default {
-  async fetch(request: Request): Promise<Response> {
+  async fetch(request: Request, env: Env): Promise<Response> {
     // CORS preflight
     if (request.method === "OPTIONS") {
       return corsResponse();
@@ -256,7 +318,7 @@ export default {
       const responses: JsonRpcResponse[] = [];
 
       for (const msg of messages) {
-        const res = handleMessage(msg);
+        const res = await handleMessage(msg, env);
         if (res) responses.push(res);
       }
 

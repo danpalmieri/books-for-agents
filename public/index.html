@@ -681,14 +681,16 @@
                 border-top: 1px solid var(--border);
             }
             .contribute-box {
-                margin-top: 48px;
-                padding: 48px;
+                padding: 40px 36px;
                 border-radius: 16px;
                 border: 1px solid var(--border);
                 background: var(--bg-surface);
                 text-align: center;
                 position: relative;
                 overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
             }
             .contribute-box::before {
                 content: "";
@@ -705,8 +707,17 @@
                 );
                 pointer-events: none;
             }
+            .contribute-box-icon {
+                font-family: 'Material Symbols Outlined';
+                font-size: 36px;
+                color: var(--accent);
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'opsz' 48;
+                line-height: 1;
+                margin-bottom: 20px;
+                position: relative;
+            }
             .contribute-box h3 {
-                font-size: 24px;
+                font-size: 22px;
                 font-weight: 700;
                 margin-bottom: 12px;
                 position: relative;
@@ -715,37 +726,48 @@
                 font-size: 15px;
                 color: var(--text-secondary);
                 max-width: 480px;
-                margin: 0 auto 28px;
+                margin: 0 auto 24px;
                 line-height: 1.6;
                 position: relative;
             }
-            .contribute-steps {
-                display: flex;
-                gap: 24px;
-                justify-content: center;
-                margin-bottom: 32px;
-                flex-wrap: wrap;
+            .contribute-cmd {
+                width: 100%;
+                background: var(--bg-elevated);
+                border: 1px solid var(--border);
+                border-radius: 10px;
+                padding: 14px 18px;
+                font-family: var(--font-mono);
+                font-size: 13px;
+                color: var(--text);
+                text-align: left;
+                margin-bottom: 24px;
                 position: relative;
-            }
-            .contribute-step {
                 display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 14px;
-                color: var(--text-secondary);
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 12px;
             }
-            .contribute-step .num {
-                width: 28px;
-                height: 28px;
-                border-radius: 8px;
-                background: var(--accent-dim);
+            .contribute-cmd .prompt {
                 color: var(--accent);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 700;
-                font-size: 12px;
-                flex-shrink: 0;
+                user-select: none;
+            }
+            .contribute-cmd .comment {
+                color: var(--text-muted);
+            }
+            .contribute-cmd code {
+                flex: 1;
+                white-space: pre;
+                line-height: 1.7;
+            }
+            .contribute-cost {
+                font-size: 13px;
+                color: var(--text-muted);
+                position: relative;
+                margin-bottom: 24px;
+            }
+            .contribute-box .btn {
+                margin-top: auto;
+                position: relative;
             }
 
             /* ========== FOOTER ========== */
@@ -828,11 +850,7 @@
                     grid-template-columns: 1fr;
                 }
                 .contribute-box {
-                    padding: 32px 20px;
-                }
-                .contribute-steps {
-                    flex-direction: column;
-                    align-items: center;
+                    padding: 32px 16px;
                 }
                 .catalog-header {
                     flex-direction: column;
@@ -1323,34 +1341,25 @@
                         The catalog grows with the community
                     </div>
                 </div>
-                <div class="contribute-box reveal">
-                    <h3>Add a book to the knowledge base</h3>
-                    <p>
-                        Follow the Markdown template, write a structured summary
-                        with key ideas and frameworks, and submit a pull
-                        request. It's that simple.
-                    </p>
-                    <div class="contribute-steps">
-                        <div class="contribute-step">
-                            <span class="num">1</span> Fork the repo
+                <div class="contribute-box reveal" style="margin-top: 48px; max-width: 640px; margin-left: auto; margin-right: auto;">
+                        <span class="contribute-box-icon">token</span>
+                        <h3>Donate your tokens</h3>
+                        <p>
+                            Already connected to Books for Agents? Just ask your agent
+                            to generate the next book. It uses your tokens, creates the
+                            summary, and submits it as a GitHub Issue automatically.
+                        </p>
+                        <div class="contribute-cmd">
+                            <code><span class="string">"Generate the next book from the backlog"</span></code>
                         </div>
-                        <div class="contribute-step">
-                            <span class="num">2</span> Copy the template
-                        </div>
-                        <div class="contribute-step">
-                            <span class="num">3</span> Write the summary
-                        </div>
-                        <div class="contribute-step">
-                            <span class="num">4</span> Open a PR
-                        </div>
-                    </div>
-                    <a
-                        href="https://github.com/danpalmieri/books-for-agents/blob/main/.github/CONTRIBUTING.md"
-                        target="_blank"
-                        class="btn btn-primary"
-                    >
-                        Add a Book
-                    </a>
+                        <div class="contribute-cost">22 books in the backlog &mdash; your agent does all the work</div>
+                        <a
+                            href="https://github.com/danpalmieri/books-for-agents/blob/main/books/backlog.yml"
+                            target="_blank"
+                            class="btn btn-primary"
+                        >
+                            View Backlog
+                        </a>
                 </div>
             </div>
         </section>
