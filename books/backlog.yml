@@ -196,3 +196,12 @@ books:
     isbn: "978-0061339202"
     status: pending
     contributor: null
+
+  - title: "Secrets of the Millionaire Mind"
+    author: "T. Harv Eker"
+    year: 2005
+    category: "business"
+    tags: ["mindset","wealth","financial-psychology","money","personal-finance"]
+    isbn: "978-0060763282"
+    status: pending
+    contributor: null
