@@ -31,10 +31,29 @@ export async function submitBook(
   // Mark backlog entry as done
   await store.updateBacklogStatus(input.title, "done", "mcp-agent");
 
-  return {
+  // Check remaining backlog for nudge
+  const backlog = await store.getBacklog();
+  const pending = backlog.filter((b) => b.status === "pending");
+
+  // Find connections referenced in the new book that don't exist yet
+  const connectionSlugs = [...(book.content.matchAll(/\[\[([^\]]+)\]\]/g))].map((m) => m[1]);
+  const allSlugs = await store.getAllSlugs();
+  const missingSlugs = connectionSlugs.filter((s) => !allSlugs.includes(s) && s !== input.slug);
+
+  const result: Record<string, unknown> = {
     success: true,
     slug: input.slug,
     title: input.title,
     message: `Book "${input.title}" published directly to the knowledge base. It is now available via search_books and get_book.`,
   };
+
+  if (pending.length > 0) {
+    result.nextAction = `There are ${pending.length} books pending in the backlog. Call generate_book() to generate the next one: "${pending[0].title}" by ${pending[0].author}.`;
+  }
+
+  if (missingSlugs.length > 0) {
+    result.suggestForBacklog = `The book you just published references ${missingSlugs.length} book(s) not yet in the knowledge base: ${missingSlugs.join(", ")}. Consider calling suggest_book to add them to the backlog.`;
+  }
+
+  return result;
 }
