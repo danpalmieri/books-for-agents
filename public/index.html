@@ -499,6 +499,116 @@
                 color: var(--text-secondary);
             }
 
+            /* ========== PLATFORM TABS ========== */
+            .tab-buttons {
+                display: flex;
+                gap: 8px;
+                margin-bottom: 24px;
+                flex-wrap: wrap;
+            }
+            .tab-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 20px;
+                border-radius: 10px;
+                border: 1px solid var(--border);
+                background: var(--bg-surface);
+                color: var(--text-secondary);
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                font-family: var(--font-sans);
+                transition: all 0.2s;
+            }
+            .tab-btn:hover {
+                border-color: var(--border-light);
+                color: var(--text);
+            }
+            .tab-btn.active {
+                border-color: var(--accent);
+                background: var(--accent-dim);
+                color: var(--accent);
+            }
+            .tab-icon {
+                font-size: 16px;
+            }
+            .tab-content {
+                display: none;
+            }
+            .tab-content.active {
+                display: block;
+            }
+
+            /* ========== SETUP STEPS ========== */
+            .setup-steps {
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+            .setup-step {
+                display: flex;
+                gap: 20px;
+                align-items: flex-start;
+            }
+            .setup-step-num {
+                width: 32px;
+                height: 32px;
+                min-width: 32px;
+                border-radius: 9px;
+                background: var(--accent-dim);
+                color: var(--accent);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 13px;
+                margin-top: 2px;
+            }
+            .setup-step-text {
+                flex: 1;
+            }
+            .setup-step-text h4 {
+                font-size: 16px;
+                font-weight: 600;
+                margin-bottom: 8px;
+            }
+            .setup-step-text p {
+                font-size: 14px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin-bottom: 12px;
+            }
+            .setup-step-text p:last-child {
+                margin-bottom: 0;
+            }
+            .setup-step-text .code-block {
+                margin-top: 8px;
+            }
+            .setup-path {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 6px;
+                font-size: 13px;
+            }
+            .path-label {
+                font-weight: 600;
+                color: var(--text-muted);
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                min-width: 60px;
+            }
+            .setup-path code {
+                font-family: var(--font-mono);
+                font-size: 12px;
+                color: var(--text-secondary);
+                background: var(--bg-elevated);
+                padding: 3px 8px;
+                border-radius: 5px;
+            }
+
             /* ========== CATALOG ========== */
             .catalog {
                 border-top: 1px solid var(--border);
@@ -985,7 +1095,7 @@
             </div>
         </section>
 
-        <!-- CODE DEMO -->
+        <!-- SETUP -->
         <section class="demo" id="setup">
             <div class="container">
                 <div class="reveal">
@@ -994,59 +1104,184 @@
                         Add to your agent in seconds
                     </div>
                     <div class="section-desc">
-                        One configuration block. No dependencies, no API keys,
-                        no database.
+                        Choose your platform below. No API keys, no database, no local install required.
                     </div>
                 </div>
-                <div class="demo-grid">
-                    <div class="code-block reveal">
-                        <div class="code-header">
-                            <span>mcp-config.json</span>
-                            <button
-                                class="code-copy"
-                                onclick="copyCode(this, 'config')"
-                            >
-                                Copy
-                            </button>
-                        </div>
-                        <div class="code-content" id="config"><pre style="margin:0;font:inherit;line-height:inherit;">{
+
+                <!-- Platform tabs -->
+                <div class="platform-tabs reveal" style="margin-top: 40px;">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" onclick="showTab('claude-desktop')">
+                            <span class="tab-icon">🖥️</span> Claude Desktop
+                        </button>
+                        <button class="tab-btn" onclick="showTab('claude-code')">
+                            <span class="tab-icon">⌨️</span> Claude Code
+                        </button>
+                        <button class="tab-btn" onclick="showTab('openai')">
+                            <span class="tab-icon">🤖</span> ChatGPT / OpenAI
+                        </button>
+                        <button class="tab-btn" onclick="showTab('cursor')">
+                            <span class="tab-icon">📝</span> Cursor
+                        </button>
+                    </div>
+
+                    <!-- Claude Desktop -->
+                    <div class="tab-content active" id="tab-claude-desktop">
+                        <div class="setup-steps">
+                            <div class="setup-step">
+                                <div class="setup-step-num">1</div>
+                                <div class="setup-step-text">
+                                    <h4>Open the config file</h4>
+                                    <p>Go to <strong>Claude Desktop → Settings → Developer → Edit Config</strong></p>
+                                    <div class="setup-path">
+                                        <span class="path-label">macOS</span>
+                                        <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>
+                                    </div>
+                                    <div class="setup-path">
+                                        <span class="path-label">Windows</span>
+                                        <code>%APPDATA%\Claude\claude_desktop_config.json</code>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="setup-step-num">2</div>
+                                <div class="setup-step-text">
+                                    <h4>Add the server configuration</h4>
+                                    <div class="code-block">
+                                        <div class="code-header">
+                                            <span>claude_desktop_config.json</span>
+                                            <button class="code-copy" onclick="copyCode(this, 'config-claude-desktop')">Copy</button>
+                                        </div>
+                                        <div class="code-content" id="config-claude-desktop"><pre style="margin:0;font:inherit;line-height:inherit;">{
   <span class="key">"mcpServers"</span>: {
     <span class="key">"books-for-agents"</span>: {
       <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
     }
   }
 }</pre></div>
-                    </div>
-                    <div class="code-block reveal">
-                        <div class="code-header">
-                            <span>tool-call-example</span>
-                            <button
-                                class="code-copy"
-                                onclick="copyCode(this, 'toolcall')"
-                            >
-                                Copy
-                            </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="setup-step-num">3</div>
+                                <div class="setup-step-text">
+                                    <h4>Restart Claude Desktop</h4>
+                                    <p>Quit and reopen. You'll see a <strong>🔨 tools icon</strong> in the chat — that means the MCP server is connected.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="code-content" id="toolcall">
-                            <span class="fn">search_books</span>({
-                            <span class="key">query</span>:
-                            <span class="string">"leadership"</span> })
+                    </div>
 
-                            <span class="arrow">→</span>
-                            <span class="title-res"
-                                >How to Win Friends and Influence People</span
-                            >
-                            <span class="author-res"
-                                >Dale Carnegie &middot; business</span
-                            >
+                    <!-- Claude Code -->
+                    <div class="tab-content" id="tab-claude-code">
+                        <div class="setup-steps">
+                            <div class="setup-step">
+                                <div class="setup-step-num">1</div>
+                                <div class="setup-step-text">
+                                    <h4>Run one command</h4>
+                                    <p>Open your terminal and run:</p>
+                                    <div class="code-block">
+                                        <div class="code-header">
+                                            <span>terminal</span>
+                                            <button class="code-copy" onclick="copyCode(this, 'config-claude-code')">Copy</button>
+                                        </div>
+                                        <div class="code-content" id="config-claude-code"><pre style="margin:0;font:inherit;line-height:inherit;"><span class="prompt">$</span> claude mcp add --transport http books-for-agents https://booksforagents.com/mcp</pre></div>
+                                    </div>
+                                    <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">Add <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">--scope user</code> to make it available globally across all projects.</p>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="setup-step-num">2</div>
+                                <div class="setup-step-text">
+                                    <h4>That's it</h4>
+                                    <p>Start a new Claude Code session. The books tools (<code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">search_books</code>, <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">get_book</code>, <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">list_categories</code>) are now available.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-                            <span class="arrow">→</span>
-                            <span class="title-res"
-                                >The 7 Habits of Highly Effective People</span
-                            >
-                            <span class="author-res"
-                                >Stephen Covey &middot; self-improvement</span
-                            >
+                    <!-- OpenAI / ChatGPT -->
+                    <div class="tab-content" id="tab-openai">
+                        <div class="setup-steps">
+                            <div class="setup-step">
+                                <div class="setup-step-num">1</div>
+                                <div class="setup-step-text">
+                                    <h4>Open ChatGPT Settings</h4>
+                                    <p>In the ChatGPT desktop app, go to <strong>Settings → Tools & plugins → Add MCP server</strong>.</p>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="setup-step-num">2</div>
+                                <div class="setup-step-text">
+                                    <h4>Add the server URL</h4>
+                                    <div class="code-block">
+                                        <div class="code-header">
+                                            <span>MCP Server URL</span>
+                                            <button class="code-copy" onclick="copyCode(this, 'config-openai')">Copy</button>
+                                        </div>
+                                        <div class="code-content" id="config-openai"><pre style="margin:0;font:inherit;line-height:inherit;"><span class="string">https://booksforagents.com/mcp</span></pre></div>
+                                    </div>
+                                    <p style="margin-top: 12px;">Enter the URL above, give it a name (e.g. "Books for Agents") and confirm.</p>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="setup-step-num">3</div>
+                                <div class="setup-step-text">
+                                    <h4>For the Responses API</h4>
+                                    <p>If using the API directly, add the MCP server as a tool:</p>
+                                    <div class="code-block">
+                                        <div class="code-header">
+                                            <span>api-request.json</span>
+                                            <button class="code-copy" onclick="copyCode(this, 'config-openai-api')">Copy</button>
+                                        </div>
+                                        <div class="code-content" id="config-openai-api"><pre style="margin:0;font:inherit;line-height:inherit;">{
+  <span class="key">"model"</span>: <span class="string">"gpt-4.1"</span>,
+  <span class="key">"tools"</span>: [
+    {
+      <span class="key">"type"</span>: <span class="string">"mcp"</span>,
+      <span class="key">"server_label"</span>: <span class="string">"books-for-agents"</span>,
+      <span class="key">"server_url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>,
+      <span class="key">"require_approval"</span>: <span class="string">"never"</span>
+    }
+  ],
+  <span class="key">"input"</span>: <span class="string">"Find books about leadership"</span>
+}</pre></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cursor -->
+                    <div class="tab-content" id="tab-cursor">
+                        <div class="setup-steps">
+                            <div class="setup-step">
+                                <div class="setup-step-num">1</div>
+                                <div class="setup-step-text">
+                                    <h4>Create or edit the MCP config file</h4>
+                                    <p>In your project root, create <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">.cursor/mcp.json</code>:</p>
+                                    <div class="code-block">
+                                        <div class="code-header">
+                                            <span>.cursor/mcp.json</span>
+                                            <button class="code-copy" onclick="copyCode(this, 'config-cursor')">Copy</button>
+                                        </div>
+                                        <div class="code-content" id="config-cursor"><pre style="margin:0;font:inherit;line-height:inherit;">{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"books-for-agents"</span>: {
+      <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
+    }
+  }
+}</pre></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setup-step">
+                                <div class="setup-step-num">2</div>
+                                <div class="setup-step-text">
+                                    <h4>Restart Cursor</h4>
+                                    <p>Reopen the project. The MCP tools will be available in Cursor's AI chat.</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1294,6 +1529,14 @@
             );
 
             termObserver.observe(document.getElementById("terminal-body"));
+
+            // Tab switching
+            function showTab(tabId) {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+                document.getElementById('tab-' + tabId).classList.add('active');
+                event.currentTarget.classList.add('active');
+            }
 
             // Copy code
             function copyCode(btn, id) {
