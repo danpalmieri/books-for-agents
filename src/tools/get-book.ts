@@ -1,3 +1,4 @@
+import type { BookStore } from "../store/book-store.js";
 import type { Book } from "../types.js";
 
 export interface GetBookInput {
@@ -18,18 +19,18 @@ const sectionMap: Record<string, keyof Book["sections"]> = {
   "when-to-use": "whenToUse",
 };
 
-export function getBook(books: Book[], input: GetBookInput): object {
+export async function getBook(store: BookStore, input: GetBookInput): Promise<object> {
   let book: Book | undefined;
 
   if (input.slug) {
-    book = books.find((b) => b.metadata.slug === input.slug);
+    book = await store.getBySlug(input.slug);
   } else if (input.title) {
-    const titleLower = input.title.toLowerCase();
-    book = books.find((b) => b.metadata.title.toLowerCase().includes(titleLower));
+    book = await store.getByTitle(input.title);
   }
 
   if (!book) {
-    return { error: "Book not found", availableSlugs: books.map((b) => b.metadata.slug) };
+    const slugs = await store.getAllSlugs();
+    return { error: "Book not found", availableSlugs: slugs };
   }
 
   return {
@@ -39,13 +40,14 @@ export function getBook(books: Book[], input: GetBookInput): object {
   };
 }
 
-export function getBookSection(
-  books: Book[],
+export async function getBookSection(
+  store: BookStore,
   input: GetBookSectionInput
-): object {
-  const book = books.find((b) => b.metadata.slug === input.slug);
+): Promise<object> {
+  const book = await store.getBySlug(input.slug);
   if (!book) {
-    return { error: "Book not found", availableSlugs: books.map((b) => b.metadata.slug) };
+    const slugs = await store.getAllSlugs();
+    return { error: "Book not found", availableSlugs: slugs };
   }
 
   const sectionKey = sectionMap[input.section];

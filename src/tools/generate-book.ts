@@ -1,32 +1,24 @@
-import type { Book } from "../types.js";
-import { fetchExistingIssueTitles } from "./submit-book.js";
+import type { BookStore } from "../store/book-store.js";
 
 // --- List Backlog ---
 
 export async function listBacklog(
-  backlog: BacklogEntry[],
-  githubToken: string
+  store: BookStore
 ): Promise<object> {
-  const issueTitles = await fetchExistingIssueTitles(githubToken);
+  const backlog = await store.getBacklog();
 
-  const books = backlog.map((b) => {
-    const issueTitle = `Add: ${b.title} — ${b.author}`;
-    const submitted = issueTitles.some((t) => t === issueTitle);
-    return {
-      title: b.title,
-      author: b.author,
-      category: b.category,
-      status: submitted ? "submitted" : b.status,
-    };
-  });
+  const books = backlog.map((b) => ({
+    title: b.title,
+    author: b.author,
+    category: b.category,
+    status: b.status,
+  }));
 
   const pending = books.filter((b) => b.status === "pending");
-  const submitted = books.filter((b) => b.status === "submitted");
 
   return {
     total: backlog.length,
     pending: pending.length,
-    submitted: submitted.length,
     books,
   };
 }
@@ -49,20 +41,15 @@ export interface GenerateBookInput {
 }
 
 export async function generateBook(
-  books: Book[],
-  backlog: BacklogEntry[],
-  template: string,
-  example: string,
-  input: GenerateBookInput,
-  githubToken: string
+  store: BookStore,
+  input: GenerateBookInput
 ): Promise<object> {
-  // Fetch already-submitted issues to skip them
-  const issueTitles = await fetchExistingIssueTitles(githubToken);
-
-  function isAlreadySubmitted(entry: BacklogEntry): boolean {
-    const issueTitle = `Add: ${entry.title} — ${entry.author}`;
-    return issueTitles.some((t) => t === issueTitle);
-  }
+  const [backlog, existingSlugs, template, example] = await Promise.all([
+    store.getBacklog(),
+    store.getAllSlugs(),
+    store.getTemplate(),
+    store.getExample(),
+  ]);
 
   // Find the book to generate
   let entry: BacklogEntry | undefined;
@@ -72,34 +59,38 @@ export async function generateBook(
     entry = backlog.find(
       (b) =>
         b.status === "pending" &&
-        b.title.toLowerCase().includes(titleLower) &&
-        !isAlreadySubmitted(b)
+        b.title.toLowerCase().includes(titleLower)
     );
     if (!entry) {
       const pending = backlog
-        .filter((b) => b.status === "pending" && !isAlreadySubmitted(b))
+        .filter((b) => b.status === "pending")
         .map((b) => b.title);
       return {
-        error: `No available book matching "${input.title}" found in backlog (may already be submitted).`,
+        error: `No available book matching "${input.title}" found in backlog.`,
         pendingBooks: pending,
       };
     }
   } else {
-    entry = backlog.find(
-      (b) => b.status === "pending" && !isAlreadySubmitted(b)
-    );
+    entry = backlog.find((b) => b.status === "pending");
     if (!entry) {
-      return { error: "No pending books in the backlog. All have been submitted or completed!" };
+      return { error: "No pending books in the backlog. All have been completed!" };
     }
   }
 
-  const existingSlugs = books.map((b) => b.metadata.slug);
-
+  // Check if book already exists in D1
   const slug = entry.title
     .toLowerCase()
     .replace(/['':]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+
+  const existingBook = await store.getBySlug(slug);
+  if (existingBook) {
+    return {
+      error: `Book "${entry.title}" already exists with slug "${slug}".`,
+      suggestion: "Pick a different book from the backlog.",
+    };
+  }
 
   return {
     book: {

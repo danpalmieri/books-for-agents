@@ -25,11 +25,12 @@ jobs:
 
       - run: npm ci
 
-      - name: Validate books
-        run: npx tsx scripts/validate-books.ts
-
-      - name: Build data
-        run: npm run build:data
+      - name: Apply D1 migrations
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: d1 migrations apply books-for-agents-db
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
@@ -37,3 +38,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy
+
+      - name: Reindex Vectorize embeddings
+        run: |
+          curl -sf -X POST https://booksforagents.com/_admin/reindex \
+            -H "Authorization: Bearer ${{ secrets.ADMIN_TOKEN }}" \
+            -H "Content-Type: application/json"

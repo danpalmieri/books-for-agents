@@ -9,3 +9,16 @@ routes = [
 
 [assets]
 directory = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "books-for-agents-db"
+database_id = "79d304fd-6d79-42eb-9b2e-a1e76647803e"
+migrations_dir = "migrations"
+
+[[vectorize]]
+binding = "VECTORIZE"
+index_name = "books-search-index"
+
+[ai]
+binding = "AI"

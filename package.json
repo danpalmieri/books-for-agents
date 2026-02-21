@@ -1,23 +1,15 @@
 {
   "name": "books-for-agents",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "description": "Open source book summaries optimized for AI agents, served via MCP.",
   "type": "module",
-  "main": "dist/index.js",
-  "bin": {
-    "books-for-agents": "dist/index.js"
-  },
+  "private": true,
   "scripts": {
-    "build": "tsc",
-    "build:data": "npx tsx scripts/build-books-data.ts",
-    "build:worker": "npm run build:data && wrangler deploy --dry-run --outdir=dist-worker",
-    "start": "node dist/index.js",
-    "dev": "tsc --watch",
-    "dev:worker": "npm run build:data && wrangler dev",
-    "deploy": "npm run build:data && wrangler deploy",
-    "validate": "npx tsx scripts/validate-books.ts",
-    "generate": "npx tsx scripts/generate-book.ts",
-    "prepare": "tsc"
+    "deploy": "wrangler deploy",
+    "dev:worker": "npm run db:migrate:local && wrangler dev",
+    "db:migrate": "wrangler d1 migrations apply books-for-agents-db",
+    "db:migrate:local": "wrangler d1 migrations apply books-for-agents-db --local",
+    "db:reindex": "curl -s -X POST https://booksforagents.com/_admin/reindex -H \"Authorization: Bearer $ADMIN_TOKEN\""
   },
   "keywords": [
     "mcp",
@@ -30,23 +22,9 @@
   ],
   "author": "Daniel Palmieri",
   "license": "MIT",
-  "dependencies": {
-    "@anthropic-ai/sdk": "^0.78.0",
-    "@modelcontextprotocol/sdk": "^1.12.1",
-    "yaml": "^2.8.2"
-  },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250214.0",
-    "@types/node": "^22.15.0",
-    "tsx": "^4.19.0",
     "typescript": "^5.7.3",
     "wrangler": "^4.0.0"
-  },
-  "files": [
-    "dist",
-    "books"
-  ],
-  "engines": {
-    "node": ">=18"
   }
 }

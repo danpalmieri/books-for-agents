@@ -6,7 +6,7 @@ on:
 
 jobs:
   validate:
-    name: Validate & Build
+    name: Build & Validate
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -21,11 +21,8 @@ jobs:
 
       - run: npm ci
 
-      - name: Validate books
-        run: npx tsx scripts/validate-books.ts
-
-      - name: Build data
-        run: npm run build:data
+      - name: Apply D1 migrations (local)
+        run: npx wrangler d1 migrations apply books-for-agents-db --local
 
       - name: Build worker (dry-run)
-        run: npm run build:worker
+        run: wrangler deploy --dry-run --outdir=dist-worker

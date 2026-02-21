@@ -3,30 +3,21 @@
  * Remote MCP Server over Streamable HTTP (JSON-RPC 2.0)
  */
 
-import type { Book } from "./types.js";
-import booksData from "../generated/books-data.json";
-import generationData from "../generated/generation-data.json";
-import { SearchEngine } from "./utils/search-engine.js";
+import type { BookStore } from "./store/book-store.js";
+import { D1BookStore } from "./store/d1-store.js";
 import { searchBooks } from "./tools/search-books.js";
 import { getBook, getBookSection } from "./tools/get-book.js";
 import { listCategories } from "./tools/list-categories.js";
-import { generateBook, listBacklog, type BacklogEntry } from "./tools/generate-book.js";
+import { generateBook, listBacklog } from "./tools/generate-book.js";
 import { submitBook } from "./tools/submit-book.js";
 import { suggestBook } from "./tools/suggest-book.js";
 
 interface Env {
-  GITHUB_TOKEN?: string;
+  DB: D1Database;
+  VECTORIZE: Vectorize;
+  AI: Ai;
+  ADMIN_TOKEN?: string;
 }
-
-// --- Init ---
-
-const books: Book[] = booksData as unknown as Book[];
-const engine = new SearchEngine();
-engine.index(books);
-
-const backlog: BacklogEntry[] = generationData.backlog as unknown as BacklogEntry[];
-const genTemplate: string = generationData.template;
-const genExample: string = generationData.example;
 
 // --- CORS ---
 
@@ -123,7 +114,7 @@ const TOOLS = [
   {
     name: "submit_book",
     description:
-      "Submit a generated book summary as a GitHub Issue for review. Call this after generating content with generate_book.",
+      "Publish a generated book summary directly to the knowledge base. Call this after generating content with generate_book.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -145,7 +136,7 @@ const TOOLS = [
   {
     name: "suggest_book",
     description:
-      "Suggest a new book to add to the generation backlog. Creates a GitHub Issue for maintainer review. Checks for duplicates against published books, backlog, and existing suggestions.",
+      "Suggest a new book to add to the generation backlog. Inserts directly into the backlog. Checks for duplicates against published books and existing backlog entries.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -172,7 +163,8 @@ const TOOLS = [
 
 // --- MCP Resource Definitions ---
 
-function buildResourcesList() {
+async function buildResourcesList(store: BookStore) {
+  const allBooks = await store.getAllBooks();
   const resources = [
     {
       uri: "books://catalog",
@@ -181,7 +173,7 @@ function buildResourcesList() {
       mimeType: "application/json",
     },
   ];
-  for (const book of books) {
+  for (const book of allBooks) {
     resources.push({
       uri: `books://${book.metadata.slug}`,
       name: book.metadata.slug,
@@ -192,14 +184,15 @@ function buildResourcesList() {
   return resources;
 }
 
-function readResource(uri: string) {
+async function readResource(store: BookStore, uri: string) {
   if (uri === "books://catalog") {
-    const catalog = books.map((b) => ({ ...b.metadata, oneLiner: b.oneLiner }));
+    const allBooks = await store.getAllBooks();
+    const catalog = allBooks.map((b) => ({ ...b.metadata, oneLiner: b.oneLiner }));
     return { contents: [{ uri, mimeType: "application/json", text: JSON.stringify(catalog, null, 2) }] };
   }
 
   const slug = uri.replace("books://", "");
-  const book = books.find((b) => b.metadata.slug === slug);
+  const book = await store.getBySlug(slug);
   if (!book) return { contents: [], error: "Resource not found" };
 
   return { contents: [{ uri, mimeType: "text/markdown", text: book.content }] };
@@ -207,31 +200,29 @@ function readResource(uri: string) {
 
 // --- Tool Execution ---
 
-function callTool(name: string, args: Record<string, unknown>, env: Env) {
+async function callTool(name: string, args: Record<string, unknown>, store: BookStore) {
   switch (name) {
     case "search_books":
-      return searchBooks(engine, args as { query: string; category?: string; limit?: number });
+      return searchBooks(store, args as { query: string; category?: string; limit?: number });
     case "get_book":
-      return getBook(books, args as { slug?: string; title?: string });
+      return getBook(store, args as { slug?: string; title?: string });
     case "get_book_section":
-      return getBookSection(books, args as { slug: string; section: "ideas" | "frameworks" | "quotes" | "connections" | "when-to-use" });
+      return getBookSection(store, args as { slug: string; section: "ideas" | "frameworks" | "quotes" | "connections" | "when-to-use" });
     case "list_categories":
-      return listCategories(books);
+      return listCategories(store);
     case "list_backlog":
-      return listBacklog(backlog, env.GITHUB_TOKEN || "");
+      return listBacklog(store);
     case "generate_book":
-      return generateBook(books, backlog, genTemplate, genExample, args as { title?: string }, env.GITHUB_TOKEN || "");
+      return generateBook(store, args as { title?: string });
     case "submit_book":
       return submitBook(
         args as { slug: string; title: string; author: string; category: string; content: string },
-        env.GITHUB_TOKEN || ""
+        store
       );
     case "suggest_book":
       return suggestBook(
         args as { title: string; author: string; category: string; year?: number; tags?: string[]; isbn?: string; reason?: string },
-        books,
-        backlog,
-        env.GITHUB_TOKEN || ""
+        store
       );
     default:
       return null;
@@ -254,7 +245,7 @@ interface JsonRpcResponse {
   error?: { code: number; message: string; data?: unknown };
 }
 
-async function handleMessage(msg: JsonRpcRequest, env: Env): Promise<JsonRpcResponse | null> {
+async function handleMessage(msg: JsonRpcRequest, store: BookStore, env: Env): Promise<JsonRpcResponse | null> {
   // Notifications (no id) don't get responses
   if (msg.id === undefined || msg.id === null) return null;
 
@@ -290,7 +281,7 @@ async function handleMessage(msg: JsonRpcRequest, env: Env): Promise<JsonRpcResp
     case "tools/call": {
       const toolName = msg.params?.name as string;
       const toolArgs = (msg.params?.arguments ?? {}) as Record<string, unknown>;
-      const result = await callTool(toolName, toolArgs, env);
+      const result = await callTool(toolName, toolArgs, store);
       if (result === null) {
         return error(-32602, `Unknown tool: ${toolName}`);
       }
@@ -300,12 +291,12 @@ async function handleMessage(msg: JsonRpcRequest, env: Env): Promise<JsonRpcResp
     }
 
     case "resources/list":
-      return respond({ resources: buildResourcesList() });
+      return respond({ resources: await buildResourcesList(store) });
 
     case "resources/read": {
       const uri = msg.params?.uri as string;
       if (!uri) return error(-32602, "Missing uri parameter");
-      return respond(readResource(uri));
+      return respond(await readResource(store, uri));
     }
 
     default:
@@ -322,16 +313,29 @@ export default {
       return corsResponse();
     }
 
+    const store = new D1BookStore(env.DB, env.VECTORIZE, env.AI);
+
     const url = new URL(request.url);
+
+    // Admin: reindex Vectorize embeddings
+    if (request.method === "POST" && url.pathname === "/_admin/reindex") {
+      const auth = request.headers.get("Authorization");
+      if (!env.ADMIN_TOKEN || auth !== `Bearer ${env.ADMIN_TOKEN}`) {
+        return json({ error: "Unauthorized" }, 401);
+      }
+      const result = await store.reindexVectors();
+      return json(result);
+    }
 
     // Health check / info
     if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/mcp")) {
+      const slugs = await store.getAllSlugs();
       return json({
         name: "books-for-agents",
         version: "1.0.0",
         description: "Open source knowledge base of book summaries for AI agents",
         mcp: "Use POST /mcp with JSON-RPC 2.0 to interact",
-        books: books.length,
+        books: slugs.length,
         tools: TOOLS.map((t) => t.name),
       });
     }
@@ -352,7 +356,7 @@ export default {
       const responses: JsonRpcResponse[] = [];
 
       for (const msg of messages) {
-        const res = await handleMessage(msg, env);
+        const res = await handleMessage(msg, store, env);
         if (res) responses.push(res);
       }
 

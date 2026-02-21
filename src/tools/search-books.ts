@@ -1,5 +1,4 @@
-import type { Book } from "../types.js";
-import type { SearchEngine } from "../utils/search-engine.js";
+import type { BookStore } from "../store/book-store.js";
 
 export interface SearchBooksInput {
   query: string;
@@ -7,11 +6,11 @@ export interface SearchBooksInput {
   limit?: number;
 }
 
-export function searchBooks(
-  engine: SearchEngine,
+export async function searchBooks(
+  store: BookStore,
   input: SearchBooksInput
-): object {
-  const results = engine.search(input.query, input.category, input.limit || 5);
+): Promise<object> {
+  const results = await store.search(input.query, input.category, input.limit || 5);
 
   return {
     results: results.map((r) => ({

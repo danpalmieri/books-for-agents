@@ -1,7 +1,3 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, basename, relative } from "node:path";
-
-export type { BookMetadata, Book } from "../types.js";
 import type { Book, BookMetadata } from "../types.js";
 
 function parseFrontmatter(raw: string): Record<string, unknown> {
@@ -67,13 +63,11 @@ function extractOneLiner(content: string): string {
   return match ? match[1].trim() : "";
 }
 
-export function parseBook(filePath: string): Book {
-  const raw = readFileSync(filePath, "utf-8");
+export function parseBookFromContent(raw: string, slug: string): Book {
   const fm = parseFrontmatter(raw);
 
   // Remove frontmatter from content
   const content = raw.replace(/^---\n[\s\S]*?\n---\n*/, "").trim();
-  const slug = basename(filePath, ".md");
 
   const metadata: BookMetadata = {
     title: (fm.title as string) || "",
@@ -81,7 +75,7 @@ export function parseBook(filePath: string): Book {
     year: (fm.year as number) || 0,
     category: (fm.category as string) || "",
     tags: (fm.tags as string[]) || [],
-    language: (fm.language as string) || "pt-BR",
+    language: (fm.language as string) || "en",
     isbn: (fm.isbn as string) || "",
     slug,
   };
@@ -98,34 +92,4 @@ export function parseBook(filePath: string): Book {
       whenToUse: extractSectionBilingual(content, "When to Use This Knowledge", "Quando Usar Este Conhecimento"),
     },
   };
-}
-
-export function loadAllBooks(booksDir: string): Book[] {
-  const books: Book[] = [];
-
-  const categories = readdirSync(booksDir).filter((entry) => {
-    const fullPath = join(booksDir, entry);
-    return statSync(fullPath).isDirectory() && !entry.startsWith("_");
-  });
-
-  for (const category of categories) {
-    const categoryPath = join(booksDir, category);
-    const files = readdirSync(categoryPath).filter(
-      (f) => f.endsWith(".md") && !f.startsWith("_")
-    );
-
-    for (const file of files) {
-      try {
-        const book = parseBook(join(categoryPath, file));
-        books.push(book);
-      } catch (err) {
-        console.error(
-          `Error parsing ${relative(booksDir, join(categoryPath, file))}:`,
-          err
-        );
-      }
-    }
-  }
-
-  return books;
 }

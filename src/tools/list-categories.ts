@@ -1,23 +1,17 @@
-import type { Book } from "../types.js";
+import type { BookStore } from "../store/book-store.js";
 
-export function listCategories(books: Book[]): object {
-  const categories = new Map<string, { count: number; books: string[] }>();
+export async function listCategories(store: BookStore): Promise<object> {
+  const categories = await store.getCategories();
 
-  for (const book of books) {
-    const cat = book.metadata.category;
-    const entry = categories.get(cat) || { count: 0, books: [] };
-    entry.count++;
-    entry.books.push(book.metadata.title);
-    categories.set(cat, entry);
-  }
+  const totalBooks = categories.reduce((sum, c) => sum + c.bookCount, 0);
 
   return {
-    categories: Array.from(categories.entries()).map(([name, data]) => ({
-      name,
-      bookCount: data.count,
-      books: data.books,
+    categories: categories.map((c) => ({
+      name: c.name,
+      bookCount: c.bookCount,
+      books: c.books,
     })),
-    totalBooks: books.length,
-    totalCategories: categories.size,
+    totalBooks,
+    totalCategories: categories.length,
   };
 }
