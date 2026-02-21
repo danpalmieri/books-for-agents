@@ -42,6 +42,10 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
             rel="stylesheet"
         />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1"
+            rel="stylesheet"
+        />
 
         <style>
             /* ========== RESET & BASE ========== */
@@ -99,81 +103,29 @@
                 padding: 0 24px;
             }
 
-            /* ========== NAV ========== */
-            nav {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 100;
-                background: rgba(10, 10, 10, 0.8);
-                backdrop-filter: blur(20px);
-                border-bottom: 1px solid var(--border);
-            }
-            nav .container {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                height: 60px;
-            }
-            .nav-logo {
-                font-weight: 700;
-                font-size: 15px;
-                color: var(--text);
-                display: flex;
-                align-items: center;
-                gap: 8px;
-            }
-            .nav-logo span {
-                font-size: 18px;
-            }
-            .nav-links {
-                display: flex;
-                gap: 28px;
-                align-items: center;
-            }
-            .nav-links a {
-                color: var(--text-secondary);
-                font-size: 14px;
-                font-weight: 500;
-            }
-            .nav-links a:hover {
-                color: var(--text);
-            }
-            .nav-gh {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 7px 14px;
-                border-radius: 8px;
-                border: 1px solid var(--border-light);
-                font-size: 13px;
-                color: var(--text);
-                font-weight: 500;
-                transition:
-                    border-color 0.2s,
-                    background 0.2s;
-            }
-            .nav-gh:hover {
-                border-color: var(--text-muted);
-                background: var(--bg-elevated);
-                color: var(--text);
+            /* ========== LOGO ICON ========== */
+            .logo-icon {
+                font-family: 'Material Symbols Outlined';
+                font-size: 20px;
+                color: var(--accent);
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'opsz' 24;
+                line-height: 1;
             }
 
             /* ========== HERO ========== */
             .hero {
-                padding: 160px 0 100px;
+                padding: 100px 0 80px;
                 text-align: center;
                 position: relative;
             }
             .hero::before {
                 content: "";
                 position: absolute;
-                top: 0;
+                top: -60px;
                 left: 50%;
                 transform: translateX(-50%);
-                width: 600px;
-                height: 400px;
+                width: 700px;
+                height: 500px;
                 background: radial-gradient(
                     ellipse,
                     var(--accent-glow),
@@ -181,42 +133,37 @@
                 );
                 pointer-events: none;
             }
-            .hero-badge {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 6px 14px;
-                border-radius: 100px;
-                border: 1px solid var(--border-light);
-                font-size: 13px;
-                color: var(--text-secondary);
+            .hero-icon {
+                font-family: 'Material Symbols Outlined';
+                font-size: 72px;
+                color: var(--accent);
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'opsz' 48;
+                line-height: 1;
                 margin-bottom: 28px;
-                font-weight: 500;
-                background: var(--bg-surface);
-            }
-            .hero-badge .dot {
-                width: 6px;
-                height: 6px;
-                border-radius: 50%;
-                background: var(--accent);
-                box-shadow: 0 0 8px var(--accent);
+                display: block;
+                filter: drop-shadow(0 0 30px var(--accent-glow));
             }
             .hero h1 {
-                font-size: clamp(40px, 7vw, 72px);
+                font-size: clamp(48px, 8vw, 80px);
                 font-weight: 800;
                 line-height: 1.05;
                 letter-spacing: -0.03em;
                 margin-bottom: 20px;
             }
-            .hero h1 .accent {
+            .hero .tagline {
+                font-size: clamp(16px, 2.2vw, 20px);
                 color: var(--accent);
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                font-weight: 600;
+                margin-bottom: 20px;
             }
             .hero .subtitle {
-                font-size: clamp(17px, 2.5vw, 20px);
+                font-size: clamp(16px, 2vw, 18px);
                 color: var(--text-secondary);
-                max-width: 560px;
+                max-width: 580px;
                 margin: 0 auto 40px;
-                line-height: 1.5;
+                line-height: 1.6;
                 font-weight: 400;
             }
             .hero-ctas {
@@ -257,6 +204,73 @@
                 border-color: var(--text-muted);
                 background: var(--bg-surface);
                 transform: translateY(-1px);
+            }
+
+            /* ========== TESTIMONIALS ========== */
+            .testimonials {
+                border-top: 1px solid var(--border);
+            }
+            .testimonials-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 32px;
+            }
+            .testimonials-header .section-title {
+                margin-bottom: 0;
+            }
+            .testimonials-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 16px;
+            }
+            .testimonial-card {
+                display: flex;
+                gap: 16px;
+                padding: 24px;
+                border-radius: 14px;
+                border: 1px solid var(--border);
+                background: var(--bg-surface);
+                transition: border-color 0.3s;
+            }
+            .testimonial-card:hover {
+                border-color: var(--border-light);
+            }
+            .testimonial-avatar {
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                background: var(--bg-elevated);
+                flex-shrink: 0;
+                overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: var(--text-muted);
+                font-size: 20px;
+            }
+            .testimonial-avatar img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+            .testimonial-body {
+                flex: 1;
+                min-width: 0;
+            }
+            .testimonial-text {
+                font-size: 14px;
+                color: var(--text-secondary);
+                line-height: 1.6;
+                margin-bottom: 10px;
+            }
+            .testimonial-author {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--accent);
+            }
+            .testimonial-author:hover {
+                color: var(--accent-hover);
             }
 
             /* ========== TERMINAL ========== */
@@ -426,187 +440,129 @@
             .demo {
                 border-top: 1px solid var(--border);
             }
-            .demo-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 24px;
-                margin-top: 48px;
-            }
-            .code-block {
-                background: var(--bg-surface);
+
+            /* ========== SETUP TERMINAL ========== */
+            .setup-terminal {
+                max-width: 780px;
+                margin: 0 auto;
+                border-radius: 14px;
                 border: 1px solid var(--border);
-                border-radius: 12px;
+                background: var(--bg-surface);
                 overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             }
-            .code-header {
+            .setup-terminal-header {
                 display: flex;
                 align-items: center;
-                justify-content: space-between;
-                padding: 12px 16px;
-                border-bottom: 1px solid var(--border);
+                gap: 16px;
+                padding: 10px 16px;
                 background: var(--bg-elevated);
-            }
-            .code-header span {
-                font-family: var(--font-mono);
-                font-size: 12px;
-                color: var(--text-muted);
-            }
-            .code-copy {
-                padding: 4px 10px;
-                border-radius: 6px;
-                background: transparent;
-                border: 1px solid var(--border);
-                color: var(--text-muted);
-                font-size: 11px;
-                cursor: pointer;
-                font-family: var(--font-mono);
-                transition: all 0.2s;
-            }
-            .code-copy:hover {
-                border-color: var(--text-muted);
-                color: var(--text-secondary);
-            }
-            .code-content {
-                padding: 20px;
-                font-family: var(--font-mono);
-                font-size: 13px;
-                line-height: 1.7;
+                border-bottom: 1px solid var(--border);
                 overflow-x: auto;
             }
-            .code-content .key {
-                color: #7cacf8;
-            }
-            .code-content .string {
-                color: #a5d6a7;
-            }
-            .code-content .fn {
-                color: #ce93d8;
-            }
-            .code-content .comment {
-                color: var(--text-muted);
-            }
-            .code-content .arrow {
-                color: var(--accent);
-            }
-            .code-content .dim {
-                color: var(--text-muted);
-            }
-            .code-content .title-res {
-                color: var(--text);
-                font-weight: 500;
-            }
-            .code-content .author-res {
-                color: var(--text-secondary);
-            }
-
-            /* ========== PLATFORM TABS ========== */
-            .tab-buttons {
+            .setup-terminal-dots {
                 display: flex;
                 gap: 8px;
-                margin-bottom: 24px;
-                flex-wrap: wrap;
+                flex-shrink: 0;
             }
-            .tab-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 10px 20px;
-                border-radius: 10px;
-                border: 1px solid var(--border);
-                background: var(--bg-surface);
-                color: var(--text-secondary);
-                font-size: 14px;
+            .setup-terminal-tabs {
+                display: flex;
+                gap: 4px;
+                flex-shrink: 0;
+            }
+            .setup-tab {
+                padding: 5px 14px;
+                border-radius: 6px;
+                border: 1px solid transparent;
+                background: transparent;
+                color: var(--text-muted);
+                font-size: 13px;
                 font-weight: 500;
                 cursor: pointer;
-                font-family: var(--font-sans);
+                font-family: var(--font-mono);
                 transition: all 0.2s;
+                white-space: nowrap;
             }
-            .tab-btn:hover {
-                border-color: var(--border-light);
-                color: var(--text);
+            .setup-tab:hover {
+                color: var(--text-secondary);
             }
-            .tab-btn.active {
+            .setup-tab.active {
                 border-color: var(--accent);
                 background: var(--accent-dim);
                 color: var(--accent);
             }
-            .tab-icon {
-                font-size: 16px;
+            .setup-terminal-body {
+                padding: 28px 24px;
+                font-family: var(--font-mono);
+                font-size: 14px;
+                line-height: 1.7;
+                min-height: 80px;
+                display: flex;
+                align-items: center;
             }
-            .tab-content {
+            .setup-pane {
                 display: none;
+                width: 100%;
             }
-            .tab-content.active {
+            .setup-pane.active {
                 display: block;
             }
-
-            /* ========== SETUP STEPS ========== */
-            .setup-steps {
-                display: flex;
-                flex-direction: column;
-                gap: 24px;
+            .setup-comment {
+                color: var(--text-muted);
+                margin-bottom: 12px;
+                font-size: 13px;
             }
-            .setup-step {
+            .setup-cmd-row {
                 display: flex;
-                gap: 20px;
                 align-items: flex-start;
+                gap: 16px;
             }
-            .setup-step-num {
-                width: 32px;
-                height: 32px;
-                min-width: 32px;
-                border-radius: 9px;
-                background: var(--accent-dim);
+            .setup-cmd {
+                flex: 1;
+                color: var(--text);
+                margin: 0;
+                font: inherit;
+                line-height: inherit;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
+            .setup-cmd .prompt {
                 color: var(--accent);
+                user-select: none;
+            }
+            .setup-copy {
+                flex-shrink: 0;
+                padding: 8px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: var(--bg-elevated);
+                color: var(--text-muted);
+                cursor: pointer;
+                transition: all 0.2s;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-weight: 700;
-                font-size: 13px;
                 margin-top: 2px;
             }
-            .setup-step-text {
-                flex: 1;
+            .setup-copy:hover {
+                border-color: var(--text-muted);
+                color: var(--text);
             }
-            .setup-step-text h4 {
-                font-size: 16px;
-                font-weight: 600;
-                margin-bottom: 8px;
+            .setup-copy.copied {
+                border-color: var(--accent);
+                color: var(--accent);
             }
-            .setup-step-text p {
-                font-size: 14px;
-                color: var(--text-secondary);
-                line-height: 1.6;
-                margin-bottom: 12px;
-            }
-            .setup-step-text p:last-child {
-                margin-bottom: 0;
-            }
-            .setup-step-text .code-block {
-                margin-top: 8px;
-            }
-            .setup-path {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                margin-bottom: 6px;
+            .setup-terminal-hint {
+                padding: 0 24px 20px;
                 font-size: 13px;
-            }
-            .path-label {
-                font-weight: 600;
                 color: var(--text-muted);
-                font-size: 11px;
-                text-transform: uppercase;
-                letter-spacing: 0.05em;
-                min-width: 60px;
+                text-align: center;
             }
-            .setup-path code {
-                font-family: var(--font-mono);
-                font-size: 12px;
-                color: var(--text-secondary);
-                background: var(--bg-elevated);
-                padding: 3px 8px;
-                border-radius: 5px;
+            .setup-pane .key {
+                color: #7cacf8;
+            }
+            .setup-pane .string {
+                color: #a5d6a7;
             }
 
             /* ========== CATALOG ========== */
@@ -640,7 +596,8 @@
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             }
             .book-icon {
-                font-size: 28px;
+                width: 28px;
+                height: 28px;
                 margin-bottom: 4px;
             }
             .book-card h4 {
@@ -703,8 +660,10 @@
                 border-color: var(--border-light);
             }
             .feature-icon {
-                font-size: 24px;
+                width: 24px;
+                height: 24px;
                 margin-bottom: 16px;
+                color: var(--accent);
             }
             .feature h3 {
                 font-size: 16px;
@@ -810,6 +769,9 @@
                 font-weight: 600;
                 font-size: 14px;
                 color: var(--text);
+                display: flex;
+                align-items: center;
+                gap: 6px;
             }
             .footer-sub {
                 font-size: 13px;
@@ -839,10 +801,10 @@
 
             /* ========== RESPONSIVE ========== */
             @media (max-width: 900px) {
-                .steps-grid {
+                .testimonials-grid {
                     grid-template-columns: 1fr;
                 }
-                .demo-grid {
+                .steps-grid {
                     grid-template-columns: 1fr;
                 }
                 .catalog-grid {
@@ -851,13 +813,13 @@
                 .features-grid {
                     grid-template-columns: 1fr;
                 }
-                .nav-links .nav-link-text {
-                    display: none;
-                }
             }
             @media (max-width: 600px) {
                 .hero {
-                    padding: 130px 0 60px;
+                    padding: 60px 0 40px;
+                }
+                .hero-icon {
+                    font-size: 52px;
                 }
                 section {
                     padding: 64px 0;
@@ -881,24 +843,46 @@
                     flex-direction: column;
                     align-items: center;
                 }
+                .setup-terminal-header {
+                    padding: 10px 12px;
+                    gap: 10px;
+                }
+                .setup-terminal-dots {
+                    display: none;
+                }
+                .setup-tab {
+                    padding: 5px 10px;
+                    font-size: 11px;
+                }
+                .setup-terminal-body {
+                    padding: 20px 16px;
+                    font-size: 12px;
+                }
+                .setup-cmd {
+                    word-break: break-all;
+                }
             }
         </style>
     </head>
     <body>
-        <!-- NAV -->
-        <nav>
+        <!-- HERO -->
+        <section class="hero">
             <div class="container">
-                <div class="nav-logo"><span>📚</span> Books for Agents</div>
-                <div class="nav-links">
-                    <a href="#how-it-works" class="nav-link-text"
-                        >How it works</a
-                    >
-                    <a href="#catalog" class="nav-link-text">Books</a>
-                    <a href="#contribute" class="nav-link-text">Contribute</a>
+                <span class="hero-icon">auto_stories</span>
+                <h1>Books for Agents</h1>
+                <p class="tagline">Structured book knowledge for AI agents.</p>
+                <p class="subtitle">
+                    Any MCP-compatible agent can connect, search, and retrieve curated
+                    book insights in real time. Open source. No API keys needed.
+                </p>
+                <div class="hero-ctas">
+                    <a href="#setup" class="btn btn-primary">
+                        Quick Setup
+                    </a>
                     <a
                         href="https://github.com/danpalmieri/books-for-agents"
                         target="_blank"
-                        class="nav-gh"
+                        class="btn btn-secondary"
                     >
                         <svg
                             width="16"
@@ -912,46 +896,6 @@
                         </svg>
                         GitHub
                     </a>
-                </div>
-            </div>
-        </nav>
-
-        <!-- HERO -->
-        <section class="hero">
-            <div class="container">
-                <div class="hero-badge">
-                    <span class="dot"></span> Open source &middot; MCP-powered
-                </div>
-                <h1>Books for <span class="accent">Agents</span></h1>
-                <p class="subtitle">
-                    Structured book knowledge for AI agents. Any MCP-compatible
-                    agent can connect, search, and use curated book insights in
-                    real time.
-                </p>
-                <div class="hero-ctas">
-                    <a
-                        href="https://github.com/danpalmieri/books-for-agents"
-                        target="_blank"
-                        class="btn btn-primary"
-                    >
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                        >
-                            <path
-                                d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"
-                            />
-                        </svg>
-                        View on GitHub
-                    </a>
-                    <a
-                        href="https://github.com/danpalmieri/books-for-agents#mcp-server-configuration"
-                        target="_blank"
-                        class="btn btn-secondary"
-                        >Read the Docs</a
-                    >
                 </div>
 
                 <!-- Terminal animation -->
@@ -1047,6 +991,155 @@
             </div>
         </section>
 
+        <!-- TESTIMONIALS -->
+        <section class="testimonials" id="testimonials">
+            <div class="container">
+                <div class="testimonials-header reveal">
+                    <div class="section-title">What people say</div>
+                </div>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-avatar">
+                            <img src="https://avatars.githubusercontent.com/u/1392562?v=4" alt="Dan Palmieri">
+                        </div>
+                        <div class="testimonial-body">
+                            <p class="testimonial-text">"I built Books for Agents because I wanted my AI coding assistant to reference real book knowledge, not hallucinated summaries. Now any MCP agent can tap into structured insights from the best books, for free."</p>
+                            <a class="testimonial-author" href="https://x.com/dlpalmieri" target="_blank">@dlpalmieri</a>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-avatar">
+                            <img src="https://unavatar.io/x/SandrolimaBR" alt="Sandro Lima">
+                        </div>
+                        <div class="testimonial-body">
+                            <p class="testimonial-text">"Connected Books for Agents to Claude and asked for leadership references. In seconds it pulled frameworks from The 7 Habits and applied them directly to my context. This MCP server is insane."</p>
+                            <a class="testimonial-author" href="https://x.com/SandrolimaBR" target="_blank">@SandrolimaBR</a>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-avatar">
+                            <img src="https://unavatar.io/x/AnAzej" alt="AnAzej">
+                        </div>
+                        <div class="testimonial-body">
+                            <p class="testimonial-text">"Books for Agents is a game changer. Having structured book knowledge available to any AI agent through MCP is huge, and it really speeds up research and decision-making."</p>
+                            <a class="testimonial-author" href="https://x.com/AnAzej" target="_blank">@AnAzej</a>
+                        </div>
+                    </div>
+                    <div class="testimonial-card reveal">
+                        <div class="testimonial-avatar">
+                            <img src="https://unavatar.io/x/taliriapetrone" alt="Talíria Petrone">
+                        </div>
+                        <div class="testimonial-body">
+                            <p class="testimonial-text">"Open source, no API keys, works with any MCP client. Added it to my ChatGPT setup in minutes. The search is surprisingly good at finding relevant books by topic."</p>
+                            <a class="testimonial-author" href="https://x.com/taliriapetrone" target="_blank">@taliriapetrone</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SETUP -->
+        <section class="demo" id="setup">
+            <div class="container">
+                <div class="reveal">
+                    <div class="section-label">Quick setup</div>
+                    <div class="section-title">
+                        Add to your agent in seconds
+                    </div>
+                    <div class="section-desc">
+                        No API keys, no database, no local install required.
+                    </div>
+                </div>
+
+                <!-- Terminal card -->
+                <div class="setup-terminal reveal" style="margin-top: 40px;">
+                    <div class="setup-terminal-header">
+                        <div class="setup-terminal-dots">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                        </div>
+                        <div class="setup-terminal-tabs">
+                            <button class="setup-tab active" onclick="showSetupTab('auto-install')">Auto-install</button>
+                            <button class="setup-tab" onclick="showSetupTab('claude-desktop')">Claude Desktop</button>
+                            <button class="setup-tab" onclick="showSetupTab('claude-code')">Claude Code</button>
+                            <button class="setup-tab" onclick="showSetupTab('chatgpt')">ChatGPT</button>
+                            <button class="setup-tab" onclick="showSetupTab('cursor')">Cursor</button>
+                        </div>
+                    </div>
+                    <div class="setup-terminal-body">
+                        <!-- Auto-install -->
+                        <div class="setup-pane active" id="pane-auto-install">
+                            <div class="setup-comment"># Works everywhere. Configures everything.</div>
+                            <div class="setup-cmd-row">
+                                <div class="setup-cmd"><span class="prompt">$</span> curl -fsSL https://booksforagents.com/install.sh | bash</div>
+                                <button class="setup-copy" onclick="copySetup(this, 'curl -fsSL https://booksforagents.com/install.sh | bash')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Claude Desktop -->
+                        <div class="setup-pane" id="pane-claude-desktop">
+                            <div class="setup-comment"># Add to claude_desktop_config.json → Restart Claude Desktop</div>
+                            <div class="setup-cmd-row">
+                                <pre class="setup-cmd">{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"books-for-agents"</span>: {
+      <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
+    }
+  }
+}</pre>
+                                <button class="setup-copy" onclick="copySetup(this, '{\n  &quot;mcpServers&quot;: {\n    &quot;books-for-agents&quot;: {\n      &quot;url&quot;: &quot;https://booksforagents.com/mcp&quot;\n    }\n  }\n}')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Claude Code -->
+                        <div class="setup-pane" id="pane-claude-code">
+                            <div class="setup-comment"># Run once. Add --scope user for global access.</div>
+                            <div class="setup-cmd-row">
+                                <div class="setup-cmd"><span class="prompt">$</span> claude mcp add --transport http books-for-agents https://booksforagents.com/mcp</div>
+                                <button class="setup-copy" onclick="copySetup(this, 'claude mcp add --transport http books-for-agents https://booksforagents.com/mcp')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ChatGPT -->
+                        <div class="setup-pane" id="pane-chatgpt">
+                            <div class="setup-comment"># Settings → Tools & plugins → Add MCP server</div>
+                            <div class="setup-cmd-row">
+                                <div class="setup-cmd"><span class="string">https://booksforagents.com/mcp</span></div>
+                                <button class="setup-copy" onclick="copySetup(this, 'https://booksforagents.com/mcp')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Cursor -->
+                        <div class="setup-pane" id="pane-cursor">
+                            <div class="setup-comment"># Add to .cursor/mcp.json → Restart Cursor</div>
+                            <div class="setup-cmd-row">
+                                <pre class="setup-cmd">{
+  <span class="key">"mcpServers"</span>: {
+    <span class="key">"books-for-agents"</span>: {
+      <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
+    }
+  }
+}</pre>
+                                <button class="setup-copy" onclick="copySetup(this, '{\n  &quot;mcpServers&quot;: {\n    &quot;books-for-agents&quot;: {\n      &quot;url&quot;: &quot;https://booksforagents.com/mcp&quot;\n    }\n  }\n}')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="setup-terminal-hint" id="setup-hint">Works on macOS, Linux, and WSL. Detects your platform and configures automatically.</div>
+                </div>
+            </div>
+        </section>
+
         <!-- HOW IT WORKS -->
         <section class="steps" id="how-it-works">
             <div class="container">
@@ -1095,199 +1188,6 @@
             </div>
         </section>
 
-        <!-- SETUP -->
-        <section class="demo" id="setup">
-            <div class="container">
-                <div class="reveal">
-                    <div class="section-label">Quick setup</div>
-                    <div class="section-title">
-                        Add to your agent in seconds
-                    </div>
-                    <div class="section-desc">
-                        Choose your platform below. No API keys, no database, no local install required.
-                    </div>
-                </div>
-
-                <!-- Platform tabs -->
-                <div class="platform-tabs reveal" style="margin-top: 40px;">
-                    <div class="tab-buttons">
-                        <button class="tab-btn active" onclick="showTab('claude-desktop')">
-                            <span class="tab-icon">🖥️</span> Claude Desktop
-                        </button>
-                        <button class="tab-btn" onclick="showTab('claude-code')">
-                            <span class="tab-icon">⌨️</span> Claude Code
-                        </button>
-                        <button class="tab-btn" onclick="showTab('openai')">
-                            <span class="tab-icon">🤖</span> ChatGPT / OpenAI
-                        </button>
-                        <button class="tab-btn" onclick="showTab('cursor')">
-                            <span class="tab-icon">📝</span> Cursor
-                        </button>
-                    </div>
-
-                    <!-- Claude Desktop -->
-                    <div class="tab-content active" id="tab-claude-desktop">
-                        <div class="setup-steps">
-                            <div class="setup-step">
-                                <div class="setup-step-num">1</div>
-                                <div class="setup-step-text">
-                                    <h4>Open the config file</h4>
-                                    <p>Go to <strong>Claude Desktop → Settings → Developer → Edit Config</strong></p>
-                                    <div class="setup-path">
-                                        <span class="path-label">macOS</span>
-                                        <code>~/Library/Application Support/Claude/claude_desktop_config.json</code>
-                                    </div>
-                                    <div class="setup-path">
-                                        <span class="path-label">Windows</span>
-                                        <code>%APPDATA%\Claude\claude_desktop_config.json</code>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="setup-step">
-                                <div class="setup-step-num">2</div>
-                                <div class="setup-step-text">
-                                    <h4>Add the server configuration</h4>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span>claude_desktop_config.json</span>
-                                            <button class="code-copy" onclick="copyCode(this, 'config-claude-desktop')">Copy</button>
-                                        </div>
-                                        <div class="code-content" id="config-claude-desktop"><pre style="margin:0;font:inherit;line-height:inherit;">{
-  <span class="key">"mcpServers"</span>: {
-    <span class="key">"books-for-agents"</span>: {
-      <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
-    }
-  }
-}</pre></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="setup-step">
-                                <div class="setup-step-num">3</div>
-                                <div class="setup-step-text">
-                                    <h4>Restart Claude Desktop</h4>
-                                    <p>Quit and reopen. You'll see a <strong>🔨 tools icon</strong> in the chat — that means the MCP server is connected.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Claude Code -->
-                    <div class="tab-content" id="tab-claude-code">
-                        <div class="setup-steps">
-                            <div class="setup-step">
-                                <div class="setup-step-num">1</div>
-                                <div class="setup-step-text">
-                                    <h4>Run one command</h4>
-                                    <p>Open your terminal and run:</p>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span>terminal</span>
-                                            <button class="code-copy" onclick="copyCode(this, 'config-claude-code')">Copy</button>
-                                        </div>
-                                        <div class="code-content" id="config-claude-code"><pre style="margin:0;font:inherit;line-height:inherit;"><span class="prompt">$</span> claude mcp add --transport http books-for-agents https://booksforagents.com/mcp</pre></div>
-                                    </div>
-                                    <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);">Add <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">--scope user</code> to make it available globally across all projects.</p>
-                                </div>
-                            </div>
-                            <div class="setup-step">
-                                <div class="setup-step-num">2</div>
-                                <div class="setup-step-text">
-                                    <h4>That's it</h4>
-                                    <p>Start a new Claude Code session. The books tools (<code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">search_books</code>, <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">get_book</code>, <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">list_categories</code>) are now available.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- OpenAI / ChatGPT -->
-                    <div class="tab-content" id="tab-openai">
-                        <div class="setup-steps">
-                            <div class="setup-step">
-                                <div class="setup-step-num">1</div>
-                                <div class="setup-step-text">
-                                    <h4>Open ChatGPT Settings</h4>
-                                    <p>In the ChatGPT desktop app, go to <strong>Settings → Tools & plugins → Add MCP server</strong>.</p>
-                                </div>
-                            </div>
-                            <div class="setup-step">
-                                <div class="setup-step-num">2</div>
-                                <div class="setup-step-text">
-                                    <h4>Add the server URL</h4>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span>MCP Server URL</span>
-                                            <button class="code-copy" onclick="copyCode(this, 'config-openai')">Copy</button>
-                                        </div>
-                                        <div class="code-content" id="config-openai"><pre style="margin:0;font:inherit;line-height:inherit;"><span class="string">https://booksforagents.com/mcp</span></pre></div>
-                                    </div>
-                                    <p style="margin-top: 12px;">Enter the URL above, give it a name (e.g. "Books for Agents") and confirm.</p>
-                                </div>
-                            </div>
-                            <div class="setup-step">
-                                <div class="setup-step-num">3</div>
-                                <div class="setup-step-text">
-                                    <h4>For the Responses API</h4>
-                                    <p>If using the API directly, add the MCP server as a tool:</p>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span>api-request.json</span>
-                                            <button class="code-copy" onclick="copyCode(this, 'config-openai-api')">Copy</button>
-                                        </div>
-                                        <div class="code-content" id="config-openai-api"><pre style="margin:0;font:inherit;line-height:inherit;">{
-  <span class="key">"model"</span>: <span class="string">"gpt-4.1"</span>,
-  <span class="key">"tools"</span>: [
-    {
-      <span class="key">"type"</span>: <span class="string">"mcp"</span>,
-      <span class="key">"server_label"</span>: <span class="string">"books-for-agents"</span>,
-      <span class="key">"server_url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>,
-      <span class="key">"require_approval"</span>: <span class="string">"never"</span>
-    }
-  ],
-  <span class="key">"input"</span>: <span class="string">"Find books about leadership"</span>
-}</pre></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Cursor -->
-                    <div class="tab-content" id="tab-cursor">
-                        <div class="setup-steps">
-                            <div class="setup-step">
-                                <div class="setup-step-num">1</div>
-                                <div class="setup-step-text">
-                                    <h4>Create or edit the MCP config file</h4>
-                                    <p>In your project root, create <code style="background:var(--bg-elevated);padding:2px 6px;border-radius:4px;font-size:12px;">.cursor/mcp.json</code>:</p>
-                                    <div class="code-block">
-                                        <div class="code-header">
-                                            <span>.cursor/mcp.json</span>
-                                            <button class="code-copy" onclick="copyCode(this, 'config-cursor')">Copy</button>
-                                        </div>
-                                        <div class="code-content" id="config-cursor"><pre style="margin:0;font:inherit;line-height:inherit;">{
-  <span class="key">"mcpServers"</span>: {
-    <span class="key">"books-for-agents"</span>: {
-      <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
-    }
-  }
-}</pre></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="setup-step">
-                                <div class="setup-step-num">2</div>
-                                <div class="setup-step-text">
-                                    <h4>Restart Cursor</h4>
-                                    <p>Reopen the project. The MCP tools will be available in Cursor's AI chat.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- CATALOG -->
         <section class="catalog" id="catalog">
             <div class="container">
@@ -1306,49 +1206,49 @@
                 </div>
                 <div class="catalog-grid">
                     <div class="book-card reveal">
-                        <div class="book-icon">📗</div>
+                        <svg class="book-icon" style="color:#f0a050" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-business">Business</span>
                         <h4>How to Win Friends and Influence People</h4>
                         <div class="author">Dale Carnegie</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📘</div>
+                        <svg class="book-icon" style="color:#f0a050" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-business">Business</span>
                         <h4>The Lean Startup</h4>
                         <div class="author">Eric Ries</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📕</div>
+                        <svg class="book-icon" style="color:#ce93d8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-psychology">Psychology</span>
                         <h4>Thinking, Fast and Slow</h4>
                         <div class="author">Daniel Kahneman</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📙</div>
+                        <svg class="book-icon" style="color:#ce93d8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-psychology">Psychology</span>
                         <h4>Atomic Habits</h4>
                         <div class="author">James Clear</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📓</div>
+                        <svg class="book-icon" style="color:#7cacf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-technology">Technology</span>
                         <h4>The Pragmatic Programmer</h4>
                         <div class="author">David Thomas & Andrew Hunt</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📔</div>
+                        <svg class="book-icon" style="color:#7cacf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-technology">Technology</span>
                         <h4>Clean Code</h4>
                         <div class="author">Robert C. Martin</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📒</div>
+                        <svg class="book-icon" style="color:#00d4aa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-self">Self-improvement</span>
                         <h4>Deep Work</h4>
                         <div class="author">Cal Newport</div>
                     </div>
                     <div class="book-card reveal">
-                        <div class="book-icon">📗</div>
+                        <svg class="book-icon" style="color:#00d4aa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-self">Self-improvement</span>
                         <h4>The 7 Habits of Highly Effective People</h4>
                         <div class="author">Stephen R. Covey</div>
@@ -1373,7 +1273,7 @@
                 </div>
                 <div class="features-grid">
                     <div class="feature reveal">
-                        <div class="feature-icon">📚</div>
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
                         <h3>Curated, structured knowledge</h3>
                         <p>
                             Not raw text or generic summaries. Each book is
@@ -1383,7 +1283,7 @@
                         </p>
                     </div>
                     <div class="feature reveal">
-                        <div class="feature-icon">🔌</div>
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-5"/><path d="M15 8V2"/><path d="M17 8a1 1 0 0 1 1 1v4a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1z"/><path d="M9 8V2"/></svg>
                         <h3>MCP native</h3>
                         <p>
                             Works out of the box with Claude Desktop, Claude
@@ -1392,7 +1292,7 @@
                         </p>
                     </div>
                     <div class="feature reveal">
-                        <div class="feature-icon">🌍</div>
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
                         <h3>Open source</h3>
                         <p>
                             MIT-licensed code, CC BY-SA content. Anyone can
@@ -1402,7 +1302,7 @@
                         </p>
                     </div>
                     <div class="feature reveal">
-                        <div class="feature-icon">⚡</div>
+                        <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
                         <h3>Lightweight and fast</h3>
                         <p>
                             No database, no API keys, no complex setup. Runs on
@@ -1460,12 +1360,12 @@
             <div class="container">
                 <div class="footer-content">
                     <div class="footer-left">
-                        <div class="footer-brand">📚 Books for Agents</div>
+                        <div class="footer-brand"><span class="logo-icon">auto_stories</span> Books for Agents</div>
                         <div class="footer-sub">
                             Made by
                             <a href="https://x.com/dlpalmieri" target="_blank"
                                 >Dan Palmieri</a
-                            >.
+                            > and community.
                         </div>
                     </div>
                     <div class="footer-links">
@@ -1530,23 +1430,31 @@
 
             termObserver.observe(document.getElementById("terminal-body"));
 
-            // Tab switching
-            function showTab(tabId) {
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-                document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-                document.getElementById('tab-' + tabId).classList.add('active');
+            // Setup terminal tabs
+            const hints = {
+                'auto-install': 'Works on macOS, Linux, and WSL. Detects your platform and configures automatically.',
+                'claude-desktop': 'Settings → Developer → Edit Config. Restart Claude Desktop after saving.',
+                'claude-code': 'Add --scope user for global access across all projects.',
+                'chatgpt': 'In ChatGPT desktop app: Settings → Tools & plugins → Add MCP server.',
+                'cursor': 'Save to .cursor/mcp.json in your project root. Restart Cursor.'
+            };
+            function showSetupTab(id) {
+                document.querySelectorAll('.setup-pane').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.setup-tab').forEach(el => el.classList.remove('active'));
+                document.getElementById('pane-' + id).classList.add('active');
                 event.currentTarget.classList.add('active');
+                document.getElementById('setup-hint').textContent = hints[id] || '';
             }
 
-            // Copy code
-            function copyCode(btn, id) {
-                const el = document.getElementById(id);
-                const text = el.innerText;
-                navigator.clipboard.writeText(text).then(() => {
-                    btn.textContent = "Copied!";
-                    setTimeout(() => (btn.textContent = "Copy"), 1500);
+            // Copy setup command
+            function copySetup(btn, text) {
+                const decoded = text.replace(/&quot;/g, '"').replace(/\\n/g, '\n');
+                navigator.clipboard.writeText(decoded).then(() => {
+                    btn.classList.add('copied');
+                    setTimeout(() => btn.classList.remove('copied'), 1500);
                 });
             }
+
         </script>
     </body>
 </html>
