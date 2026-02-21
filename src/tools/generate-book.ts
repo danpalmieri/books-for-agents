@@ -1,22 +1,33 @@
 import type { Book } from "../types.js";
+import { fetchExistingIssueTitles } from "./submit-book.js";
 
 // --- List Backlog ---
 
-export function listBacklog(backlog: BacklogEntry[]): object {
-  const pending = backlog.filter((b) => b.status === "pending");
-  const done = backlog.filter((b) => b.status === "done");
+export async function listBacklog(
+  backlog: BacklogEntry[],
+  githubToken: string
+): Promise<object> {
+  const issueTitles = await fetchExistingIssueTitles(githubToken);
+
+  const books = backlog.map((b) => {
+    const issueTitle = `Add: ${b.title} — ${b.author}`;
+    const submitted = issueTitles.some((t) => t === issueTitle);
+    return {
+      title: b.title,
+      author: b.author,
+      category: b.category,
+      status: submitted ? "submitted" : b.status,
+    };
+  });
+
+  const pending = books.filter((b) => b.status === "pending");
+  const submitted = books.filter((b) => b.status === "submitted");
 
   return {
     total: backlog.length,
     pending: pending.length,
-    done: done.length,
-    books: backlog.map((b) => ({
-      title: b.title,
-      author: b.author,
-      category: b.category,
-      status: b.status,
-      contributor: b.contributor,
-    })),
+    submitted: submitted.length,
+    books,
   };
 }
 
@@ -37,32 +48,48 @@ export interface GenerateBookInput {
   title?: string;
 }
 
-export function generateBook(
+export async function generateBook(
   books: Book[],
   backlog: BacklogEntry[],
   template: string,
   example: string,
-  input: GenerateBookInput
-): object {
+  input: GenerateBookInput,
+  githubToken: string
+): Promise<object> {
+  // Fetch already-submitted issues to skip them
+  const issueTitles = await fetchExistingIssueTitles(githubToken);
+
+  function isAlreadySubmitted(entry: BacklogEntry): boolean {
+    const issueTitle = `Add: ${entry.title} — ${entry.author}`;
+    return issueTitles.some((t) => t === issueTitle);
+  }
+
   // Find the book to generate
   let entry: BacklogEntry | undefined;
 
   if (input.title) {
     const titleLower = input.title.toLowerCase();
     entry = backlog.find(
-      (b) => b.status === "pending" && b.title.toLowerCase().includes(titleLower)
+      (b) =>
+        b.status === "pending" &&
+        b.title.toLowerCase().includes(titleLower) &&
+        !isAlreadySubmitted(b)
     );
     if (!entry) {
-      const pending = backlog.filter((b) => b.status === "pending").map((b) => b.title);
+      const pending = backlog
+        .filter((b) => b.status === "pending" && !isAlreadySubmitted(b))
+        .map((b) => b.title);
       return {
-        error: `No pending book matching "${input.title}" found in backlog.`,
+        error: `No available book matching "${input.title}" found in backlog (may already be submitted).`,
         pendingBooks: pending,
       };
     }
   } else {
-    entry = backlog.find((b) => b.status === "pending");
+    entry = backlog.find(
+      (b) => b.status === "pending" && !isAlreadySubmitted(b)
+    );
     if (!entry) {
-      return { error: "No pending books in the backlog. All done!" };
+      return { error: "No pending books in the backlog. All have been submitted or completed!" };
     }
   }
 
@@ -94,7 +121,7 @@ export function generateBook(
       "- Include 3-5 Key Quotes (use real, well-known quotes from the book)",
       "- Connections must reference existing books using [[slug]] format — ONLY use slugs from the list below",
       "- When to Use This Knowledge should list 5-8 specific scenarios",
-      "- Write in English, set language: \"en\" in frontmatter",
+      '- Write in English, set language: "en" in frontmatter',
       "- Focus on structured insights, original analysis, frameworks, and practical applications",
       "",
       "OUTPUT FORMAT:",

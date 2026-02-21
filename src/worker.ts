@@ -191,9 +191,9 @@ function callTool(name: string, args: Record<string, unknown>, env: Env) {
     case "list_categories":
       return listCategories(books);
     case "list_backlog":
-      return listBacklog(backlog);
+      return listBacklog(backlog, env.GITHUB_TOKEN || "");
     case "generate_book":
-      return generateBook(books, backlog, genTemplate, genExample, args as { title?: string });
+      return generateBook(books, backlog, genTemplate, genExample, args as { title?: string }, env.GITHUB_TOKEN || "");
     case "submit_book":
       return submitBook(
         args as { slug: string; title: string; author: string; category: string; content: string },

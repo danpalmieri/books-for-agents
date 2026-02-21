@@ -102,7 +102,8 @@ server.tool(
   "List all books in the generation backlog with their status (pending, done, skipped). Shows which books are available for contributors to generate.",
   {},
   async () => {
-    const result = listBacklog(backlog);
+    const githubToken = process.env.GITHUB_TOKEN || "";
+    const result = await listBacklog(backlog, githubToken);
     return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
   }
 );
@@ -117,7 +118,8 @@ server.tool(
       .describe("Book title from the backlog (omit to pick the next pending book)"),
   },
   async (input) => {
-    const result = generateBook(books, backlog, template, example, input);
+    const githubToken = process.env.GITHUB_TOKEN || "";
+    const result = await generateBook(books, backlog, template, example, input, githubToken);
     return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
   }
 );

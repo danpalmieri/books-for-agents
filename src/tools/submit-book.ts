@@ -8,6 +8,27 @@ export interface SubmitBookInput {
 
 const REPO = "danpalmieri/books-for-agents";
 
+export async function fetchExistingIssueTitles(
+  githubToken: string
+): Promise<string[]> {
+  if (!githubToken) return [];
+
+  const url = `https://api.github.com/repos/${REPO}/issues?labels=generated-summary&state=all&per_page=100`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${githubToken}`,
+      Accept: "application/vnd.github+json",
+      "User-Agent": "books-for-agents-mcp",
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
+
+  if (!response.ok) return [];
+
+  const issues = (await response.json()) as { title: string }[];
+  return issues.map((i) => i.title);
+}
+
 export async function submitBook(
   input: SubmitBookInput,
   githubToken: string
@@ -22,7 +43,17 @@ export async function submitBook(
     };
   }
 
+  // Check for duplicate before creating
+  const existingTitles = await fetchExistingIssueTitles(githubToken);
   const issueTitle = `Add: ${input.title} — ${input.author}`;
+
+  if (existingTitles.some((t) => t === issueTitle)) {
+    return {
+      error: `A submission for "${input.title}" already exists as a GitHub Issue.`,
+      suggestion: "Pick a different book from the backlog using generate_book.",
+    };
+  }
+
   const issueBody = [
     `## Generated Book Summary`,
     "",
@@ -61,8 +92,7 @@ export async function submitBook(
     const errorText = await response.text();
     return {
       error: `GitHub API error (${response.status}): ${errorText}`,
-      fallback:
-        "Copy the generated content and open a PR manually.",
+      fallback: "Copy the generated content and open a PR manually.",
     };
   }
 
