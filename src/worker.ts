@@ -327,6 +327,15 @@ export default {
       return json(result);
     }
 
+    // Reject SSE polling — MCP clients expecting Streamable HTTP SSE will
+    // reconnect in a tight loop if we reply 200.  Return 405 so they stop.
+    if (request.method === "GET" && url.pathname === "/mcp" && request.headers.get("Accept")?.includes("text/event-stream")) {
+      return new Response("SSE not supported. Use POST with JSON-RPC 2.0.", {
+        status: 405,
+        headers: { "Allow": "POST", ...CORS_HEADERS },
+      });
+    }
+
     // Health check / info
     if (request.method === "GET" && (url.pathname === "/" || url.pathname === "/mcp")) {
       const slugs = await store.getAllSlugs();
