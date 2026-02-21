@@ -738,6 +738,195 @@
                 .modal-body { padding: 16px; font-size: 12px; }
             }
 
+            /* ========== SEARCH DEMO ========== */
+            .search-demo {
+                border-top: 1px solid var(--border);
+            }
+            .search-demo-layout {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 48px;
+                align-items: center;
+                margin-top: 48px;
+            }
+            .search-demo-text .section-label {
+                margin-bottom: 12px;
+            }
+            .search-demo-text h2 {
+                font-size: clamp(28px, 4vw, 36px);
+                font-weight: 700;
+                letter-spacing: -0.02em;
+                line-height: 1.15;
+                margin-bottom: 16px;
+            }
+            .search-demo-text h2 .accent {
+                color: var(--accent);
+            }
+            .search-demo-text p {
+                font-size: 16px;
+                color: var(--text-secondary);
+                line-height: 1.7;
+                margin-bottom: 16px;
+            }
+            .search-pills {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-top: 20px;
+            }
+            .search-pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                padding: 6px 14px;
+                border-radius: 20px;
+                border: 1px solid var(--border);
+                background: var(--bg-surface);
+                color: var(--text-secondary);
+                font-size: 13px;
+                font-weight: 500;
+            }
+            .search-pill .pill-icon {
+                font-family: 'Material Symbols Outlined';
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'opsz' 20;
+                color: var(--accent);
+                font-size: 16px;
+                line-height: 1;
+            }
+            .search-card {
+                border-radius: 16px;
+                border: 1px solid var(--border);
+                background: var(--bg-surface);
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
+            .search-card-header {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 16px 20px;
+                background: var(--bg-elevated);
+                border-bottom: 1px solid var(--border);
+            }
+            .search-card-dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: var(--text-muted);
+                opacity: 0.4;
+            }
+            .search-card-input {
+                flex: 1;
+                background: var(--bg-surface);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 8px 14px;
+                font-family: var(--font-mono);
+                font-size: 13px;
+                color: var(--text);
+                outline: none;
+                transition: border-color 0.2s;
+            }
+            .search-card-input::placeholder {
+                color: var(--text-muted);
+            }
+            .search-card-input:focus {
+                border-color: var(--accent);
+            }
+            .search-card-body {
+                padding: 8px 0;
+                min-height: 200px;
+            }
+            .search-result-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 14px;
+                padding: 14px 20px;
+                transition: background 0.15s;
+            }
+            .search-result-item:hover {
+                background: var(--bg-elevated);
+            }
+            .search-result-score {
+                flex-shrink: 0;
+                width: 44px;
+                height: 44px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: var(--font-mono);
+                font-size: 12px;
+                font-weight: 600;
+            }
+            .score-high {
+                background: #00d4aa18;
+                color: var(--accent);
+                border: 1px solid #00d4aa33;
+            }
+            .score-med {
+                background: #f0a05012;
+                color: #f0a050;
+                border: 1px solid #f0a05033;
+            }
+            .score-low {
+                background: #7cacf810;
+                color: #7cacf8;
+                border: 1px solid #7cacf833;
+            }
+            .search-result-info h4 {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 3px;
+            }
+            .search-result-info .author {
+                font-size: 12px;
+                color: var(--text-muted);
+                margin-bottom: 4px;
+            }
+            .search-result-info .one-liner {
+                font-size: 12px;
+                color: var(--text-secondary);
+                line-height: 1.5;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .search-card-footer {
+                padding: 12px 20px;
+                border-top: 1px solid var(--border);
+                font-size: 12px;
+                color: var(--text-muted);
+                font-family: var(--font-mono);
+                display: flex;
+                justify-content: space-between;
+            }
+            .search-placeholder {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 48px 20px;
+                color: var(--text-muted);
+                font-size: 14px;
+                text-align: center;
+                gap: 8px;
+            }
+            .search-placeholder .placeholder-icon {
+                font-family: 'Material Symbols Outlined';
+                font-size: 32px;
+                font-variation-settings: 'FILL' 0, 'wght' 300, 'opsz' 24;
+                color: var(--text-muted);
+                opacity: 0.5;
+            }
+            @media (max-width: 900px) {
+                .search-demo-layout {
+                    grid-template-columns: 1fr;
+                    gap: 32px;
+                }
+            }
+
             /* ========== FEATURES ========== */
             .features {
                 border-top: 1px solid var(--border);
@@ -1357,6 +1546,56 @@
             </div>
         </div>
 
+        <!-- SEARCH DEMO -->
+        <section class="search-demo" id="search">
+            <div class="container">
+                <div class="search-demo-layout">
+                    <div class="search-demo-text reveal">
+                        <div class="section-label">Hybrid search</div>
+                        <h2>Your agent doesn't just match keywords. It <span class="accent">understands meaning</span>.</h2>
+                        <p>
+                            Search combines full-text indexing (SQLite FTS5) with vector embeddings
+                            (Cloudflare Vectorize) using score fusion. An agent searching for
+                            "how to deal with procrastination" finds Deep Work and Atomic Habits —
+                            even though neither book contains that exact phrase.
+                        </p>
+                        <p>
+                            Try it live. Type anything below and see real results from the knowledge base.
+                        </p>
+                        <div class="search-pills">
+                            <span class="search-pill"><span class="pill-icon">search</span> Full-text (FTS5)</span>
+                            <span class="search-pill"><span class="pill-icon">neurology</span> Vector embeddings</span>
+                            <span class="search-pill"><span class="pill-icon">merge_type</span> Score fusion</span>
+                        </div>
+                    </div>
+                    <div class="search-card reveal">
+                        <div class="search-card-header">
+                            <div class="search-card-dot"></div>
+                            <div class="search-card-dot"></div>
+                            <div class="search-card-dot"></div>
+                            <input
+                                type="text"
+                                class="search-card-input"
+                                id="search-input"
+                                placeholder="Try: leadership, build better habits, negotiate..."
+                                oninput="debouncedSearch()"
+                            />
+                        </div>
+                        <div class="search-card-body" id="search-results">
+                            <div class="search-placeholder">
+                                <span class="placeholder-icon">search</span>
+                                Type a query to search the knowledge base
+                            </div>
+                        </div>
+                        <div class="search-card-footer">
+                            <span>booksforagents.com/mcp</span>
+                            <span id="search-timing"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- FEATURES -->
         <section class="features" id="features">
             <div class="container">
@@ -1608,6 +1847,70 @@
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') closeBook();
             });
+
+            // Live search demo
+            let searchTimer;
+            function debouncedSearch() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(liveSearch, 350);
+            }
+
+            async function liveSearch() {
+                const input = document.getElementById('search-input');
+                const results = document.getElementById('search-results');
+                const timing = document.getElementById('search-timing');
+                const query = input.value.trim();
+
+                if (!query) {
+                    results.innerHTML = '<div class="search-placeholder"><span class="placeholder-icon">search</span>Type a query to search the knowledge base</div>';
+                    timing.textContent = '';
+                    return;
+                }
+
+                results.innerHTML = '<div class="search-placeholder"><span class="placeholder-icon">hourglass_empty</span>Searching...</div>';
+                const t0 = performance.now();
+
+                try {
+                    const res = await fetch('https://booksforagents.com/mcp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            id: 1,
+                            method: 'tools/call',
+                            params: { name: 'search_books', arguments: { query, limit: 4 } }
+                        })
+                    });
+                    const data = await res.json();
+                    const ms = Math.round(performance.now() - t0);
+                    const books = JSON.parse(data.result.content[0].text);
+
+                    if (!books.results || books.results.length === 0) {
+                        results.innerHTML = '<div class="search-placeholder"><span class="placeholder-icon">search_off</span>No results found</div>';
+                        timing.textContent = ms + 'ms';
+                        return;
+                    }
+
+                    const maxScore = books.results[0].relevanceScore;
+                    results.innerHTML = books.results.map(b => {
+                        const ratio = b.relevanceScore / maxScore;
+                        const scoreClass = ratio > 0.7 ? 'score-high' : ratio > 0.4 ? 'score-med' : 'score-low';
+                        const score = b.relevanceScore.toFixed(2);
+                        return `<div class="search-result-item">
+                            <div class="search-result-score ${scoreClass}">${score}</div>
+                            <div class="search-result-info">
+                                <h4>${b.title}</h4>
+                                <div class="author">${b.author} &middot; ${b.category}</div>
+                                <div class="one-liner">${b.oneLiner || ''}</div>
+                            </div>
+                        </div>`;
+                    }).join('');
+                    timing.textContent = books.results.length + ' results · ' + ms + 'ms';
+                } catch (err) {
+                    results.innerHTML = '<div class="search-placeholder"><span class="placeholder-icon">error</span>Search failed. Try again.</div>';
+                    timing.textContent = '';
+                }
+            }
 
         </script>
     </body>
