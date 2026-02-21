@@ -1371,6 +1371,7 @@
                             <button class="setup-tab" onclick="showSetupTab('claude-code')">Claude Code</button>
                             <button class="setup-tab" onclick="showSetupTab('chatgpt')">ChatGPT</button>
                             <button class="setup-tab" onclick="showSetupTab('cursor')">Cursor</button>
+                            <button class="setup-tab" onclick="showSetupTab('openclaw')">OpenClaw</button>
                         </div>
                     </div>
                     <div class="setup-terminal-body">
@@ -1436,6 +1437,25 @@
   }
 }</pre>
                                 <button class="setup-copy" onclick="copySetup(this, '{\n  &quot;mcpServers&quot;: {\n    &quot;books-for-agents&quot;: {\n      &quot;url&quot;: &quot;https://booksforagents.com/mcp&quot;\n    }\n  }\n}')">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- OpenClaw -->
+                        <div class="setup-pane" id="pane-openclaw">
+                            <div class="setup-comment"># Add to ~/.openclaw/openclaw.json under provider.mcpServers</div>
+                            <div class="setup-cmd-row">
+                                <pre class="setup-cmd">{
+  <span class="key">"provider"</span>: {
+    <span class="key">"mcpServers"</span>: {
+      <span class="key">"books-for-agents"</span>: {
+        <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
+      }
+    }
+  }
+}</pre>
+                                <button class="setup-copy" onclick="copySetup(this, '{\n  &quot;provider&quot;: {\n    &quot;mcpServers&quot;: {\n      &quot;books-for-agents&quot;: {\n        &quot;url&quot;: &quot;https://booksforagents.com/mcp&quot;\n      }\n    }\n  }\n}')">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                                 </button>
                             </div>
@@ -1766,7 +1786,8 @@
                 'claude-desktop': 'Settings → Developer → Edit Config. Restart Claude Desktop after saving.',
                 'claude-code': 'Add --scope user for global access across all projects.',
                 'chatgpt': 'In ChatGPT desktop app: Settings → Tools & plugins → Add MCP server.',
-                'cursor': 'Save to .cursor/mcp.json in your project root. Restart Cursor.'
+                'cursor': 'Save to .cursor/mcp.json in your project root. Restart Cursor.',
+                'openclaw': 'Add to ~/.openclaw/openclaw.json under provider.mcpServers. Changes apply automatically.'
             };
             function showSetupTab(id) {
                 document.querySelectorAll('.setup-pane').forEach(el => el.classList.remove('active'));
