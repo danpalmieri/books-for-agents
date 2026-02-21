@@ -1,0 +1,103 @@
+name: Issue to PR
+
+on:
+  issues:
+    types: [labeled]
+
+jobs:
+  create-pr:
+    if: >-
+      github.event.label.name == 'approved' &&
+      contains(github.event.issue.labels.*.name, 'generated-summary')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Parse issue body and write book file
+        id: parse
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+        run: npx tsx scripts/parse-issue-body.ts --write
+
+      - name: Validate books
+        run: npx tsx scripts/validate-books.ts
+
+      - name: Build data
+        run: npm run build:data
+
+      - name: Create branch, commit and push
+        env:
+          SLUG: ${{ steps.parse.outputs.slug }}
+          TITLE: ${{ steps.parse.outputs.title }}
+          AUTHOR: ${{ steps.parse.outputs.author }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH="add/${SLUG}"
+          git push origin --delete "${BRANCH}" 2>/dev/null || true
+          git checkout -b "${BRANCH}"
+          git add books/
+          git commit -m "Add: ${TITLE} — ${AUTHOR}"
+          git push origin "${BRANCH}"
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SLUG: ${{ steps.parse.outputs.slug }}
+          TITLE: ${{ steps.parse.outputs.title }}
+          AUTHOR: ${{ steps.parse.outputs.author }}
+          CATEGORY: ${{ steps.parse.outputs.category }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          EXISTING=$(gh pr list --head "add/${SLUG}" --json number --jq '.[0].number' 2>/dev/null || echo "")
+          if [ -n "$EXISTING" ]; then
+            echo "PR #${EXISTING} already exists for branch add/${SLUG}, skipping creation."
+            exit 0
+          fi
+          gh pr create \
+            --title "Add: ${TITLE} — ${AUTHOR}" \
+            --head "add/${SLUG}" \
+            --body "$(cat <<EOF
+          Closes #${ISSUE_NUMBER}
+
+          ## Generated Book Summary
+
+          - **Title:** ${TITLE}
+          - **Author:** ${AUTHOR}
+          - **Category:** ${CATEGORY}
+
+          Auto-generated from issue #${ISSUE_NUMBER}.
+          EOF
+          )" \
+            --label "generated-summary" --label "${CATEGORY}"
+
+      - name: Comment on issue with PR link
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          SLUG: ${{ steps.parse.outputs.slug }}
+        run: |
+          PR_URL=$(gh pr list --head "add/${SLUG}" --json url --jq '.[0].url')
+          gh issue comment "${ISSUE_NUMBER}" --body "PR created: ${PR_URL}"
+
+      - name: Comment on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue comment "${ISSUE_NUMBER}" \
+            --body "Automation failed. [See workflow run](${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
