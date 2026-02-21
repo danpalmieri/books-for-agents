@@ -22,11 +22,11 @@ npm run db:reindex     # Reindex Vectorize embeddings
 
 - **HTTP Worker** (`src/worker.ts`): Cloudflare Worker implementing JSON-RPC 2.0 manually (no MCP SDK). Reads/writes data from Cloudflare D1 database. Deployed to `booksforagents.com/mcp`.
 
-The server exposes 7 MCP tools and 2 resource types. Write operations (`submit_book`, `suggest_book`) go directly to D1 — no GitHub Issues or intermediate steps.
+The server exposes 8 MCP tools and 2 resource types. Write operations (`submit_book`, `suggest_book`) go directly to D1.
 
 ### Data Flow
 
-All book data lives in D1. `submit_book` parses markdown content and inserts directly into D1 + Vectorize. `suggest_book` inserts directly into the backlog table. No .md files, no seed scripts, no build steps for data.
+All book data lives in D1. `submit_book` parses markdown content and inserts directly into D1 + Vectorize. `suggest_book` inserts directly into the backlog table.
 
 ### Key Modules
 
