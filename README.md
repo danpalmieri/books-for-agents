@@ -1,4 +1,4 @@
-# 📚 Books for Agents
+# Books for Agents
 
 An open source knowledge base of structured book summaries, optimized for consumption by LLMs and AI agents via **MCP (Model Context Protocol)**.
 
@@ -164,39 +164,6 @@ npm run build:data
 npm run dev:worker
 ```
 
-## Project structure
-
-```
-books-for-agents/
-├── src/
-│   ├── index.ts                    # Local MCP Server (stdio)
-│   ├── worker.ts                   # Cloudflare Worker (remote HTTP)
-│   ├── types.ts                    # Shared types
-│   ├── tools/
-│   │   ├── search-books.ts         # Search with TF-IDF scoring
-│   │   ├── get-book.ts             # Book retrieval by slug/title
-│   │   ├── list-categories.ts      # Category aggregation
-│   │   ├── generate-book.ts        # Generation context + backlog
-│   │   └── submit-book.ts          # GitHub Issue submission
-│   └── utils/
-│       ├── markdown-parser.ts      # Book file parsing
-│       └── search-engine.ts        # TF-IDF search engine
-├── books/
-│   ├── _template.md                # Template for new books
-│   ├── backlog.yml                 # 22 books pending generation
-│   ├── business/
-│   ├── psychology/
-│   ├── technology/
-│   └── self-improvement/
-├── scripts/
-│   ├── build-books-data.ts         # Bundles books + backlog into JSON
-│   ├── validate-books.ts           # Book validation
-│   ├── generate-book.ts            # CLI for local generation
-│   └── prompts/
-│       └── generate-summary.ts     # Prompt builder for CLI
-└── wrangler.toml                   # Cloudflare Workers config
-```
-
 ## Licenses
 
 - **Code:** [MIT](LICENSE)
@@ -204,6 +171,6 @@ books-for-agents/
 
 The summaries are original analyses and structured insights, not copies of copyrighted content.
 
-## Author
+## Community
 
 **Daniel Palmieri** — [@dlpalmieri](https://x.com/dlpalmieri)
