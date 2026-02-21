@@ -105,6 +105,10 @@ export async function generateBook(
     instructions: [
       "Generate a complete book summary in Markdown following the template and example below.",
       "",
+      "LANGUAGE: ALL content MUST be written in English. This includes section headings, body text,",
+      "practical applications, framework names, and descriptions. Only direct quotes from the original",
+      'book may appear in their original language. Set language: "en" in frontmatter.',
+      "",
       "QUALITY REQUIREMENTS:",
       "- At least 150-200 non-empty lines of content (excluding frontmatter)",
       "- Include 5-7 Key Ideas, each with 2-3 substantive paragraphs and a **Practical application:** section",
@@ -112,7 +116,6 @@ export async function generateBook(
       "- Include 3-5 Key Quotes (use real, well-known quotes from the book)",
       "- Connections must reference existing books using [[slug]] format — ONLY use slugs from the list below",
       "- When to Use This Knowledge should list 5-8 specific scenarios",
-      '- Write in English, set language: "en" in frontmatter',
       "- Focus on structured insights, original analysis, frameworks, and practical applications",
       "",
       "OUTPUT FORMAT:",
