@@ -21,11 +21,11 @@ Uses structured knowledge in its response
 | Category | Books |
 |----------|-------|
 | **Business** | How to Win Friends and Influence People, The Lean Startup |
-| **Psychology** | Thinking Fast and Slow, Atomic Habits |
+| **Psychology** | Thinking Fast and Slow, Atomic Habits, The Power of Habit |
 | **Technology** | The Pragmatic Programmer, Clean Code |
 | **Self-Improvement** | Deep Work, The 7 Habits of Highly Effective People |
 
-**8 books available** + [22 in the backlog](books/backlog.yml) waiting for contributors.
+**9 books available** — and growing. Use `suggest_book` to add more to the backlog.
 
 ## Installation
 
@@ -67,35 +67,6 @@ claude mcp add books-for-agents --transport http https://booksforagents.com/mcp
 }
 ```
 
-### Local server (stdio)
-
-For local development or offline use:
-
-```bash
-npx books-for-agents
-```
-
-Or clone and build:
-
-```bash
-git clone https://github.com/danpalmieri/books-for-agents.git
-cd books-for-agents
-npm install && npm run build
-```
-
-Then add to your MCP client config:
-
-```json
-{
-  "mcpServers": {
-    "books-for-agents": {
-      "command": "npx",
-      "args": ["-y", "books-for-agents"]
-    }
-  }
-}
-```
-
 ## Available tools
 
 ### Reading
@@ -111,9 +82,10 @@ Then add to your MCP client config:
 
 | Tool | Description |
 |------|-------------|
+| `suggest_book` | Suggest a new book to add to the backlog. Checks for duplicates automatically. |
 | `list_backlog` | See all pending books and their status. |
 | `generate_book` | Get template, example, and metadata to generate the next book summary. |
-| `submit_book` | Submit a generated summary as a GitHub Issue for review. |
+| `submit_book` | Publish a generated summary directly to the knowledge base. |
 
 ## MCP Resources
 
@@ -122,27 +94,23 @@ Then add to your MCP client config:
 
 ## How to contribute
 
-See [CONTRIBUTING.md](.github/CONTRIBUTING.md) for detailed guidelines.
-
 ### Donate Your Tokens
 
 If you already have Books for Agents connected to your agent, just ask:
 
 > "Generate the next book from the backlog"
 
-Your agent will call `generate_book` to get the context, generate the summary with its own tokens, and `submit_book` to create a GitHub Issue automatically. No cloning or setup needed.
+Your agent will call `generate_book` to get the context, generate the summary with its own tokens, and `submit_book` to publish it directly to the knowledge base. No cloning, no PRs, no setup needed.
 
-### Write manually
+You can also suggest new books:
 
-1. Fork the repository
-2. Copy `books/_template.md` to the correct category
-3. Write the summary following the template
-4. Run `npm run validate` to check
-5. Open a PR
+> "Suggest adding Thinking in Bets by Annie Duke"
+
+Your agent will call `suggest_book` to add it to the backlog.
 
 ## Deploy your own
 
-The project deploys to Cloudflare Workers. Book `.md` files are bundled into JSON at build time.
+The project deploys to Cloudflare Workers with D1 as the database.
 
 ```bash
 git clone https://github.com/danpalmieri/books-for-agents.git
@@ -151,16 +119,9 @@ npm install
 npm run deploy
 ```
 
-For the `submit_book` tool to work, configure the GitHub token:
-
-```bash
-npx wrangler secret put GITHUB_TOKEN
-```
-
 For local development:
 
 ```bash
-npm run build:data
 npm run dev:worker
 ```
 

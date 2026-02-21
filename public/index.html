@@ -35,6 +35,9 @@
             href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>"
         />
 
+        <!-- Markdown -->
+        <script src="https://cdn.jsdelivr.net/npm/marked@15/marked.min.js" defer></script>
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -589,9 +592,10 @@
                 display: flex;
                 flex-direction: column;
                 gap: 12px;
+                cursor: pointer;
             }
             .book-card:hover {
-                border-color: var(--border-light);
+                border-color: var(--accent-dim);
                 transform: translateY(-2px);
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
             }
@@ -637,6 +641,101 @@
                 color: #00d4aa;
                 border-color: #00d4aa33;
                 background: #00d4aa11;
+            }
+
+            /* ========== BOOK MODAL ========== */
+            .modal-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.75);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+                padding: 24px;
+                backdrop-filter: blur(4px);
+            }
+            .modal-overlay.open {
+                display: flex;
+            }
+            .modal {
+                background: var(--bg-surface);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                max-width: 800px;
+                width: 100%;
+                max-height: 85vh;
+                display: flex;
+                flex-direction: column;
+                box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            }
+            .modal-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 24px;
+                border-bottom: 1px solid var(--border);
+                flex-shrink: 0;
+            }
+            .modal-title {
+                font-size: 16px;
+                font-weight: 600;
+            }
+            .modal-close {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                border: 1px solid var(--border);
+                background: var(--bg-elevated);
+                color: var(--text-secondary);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 18px;
+                transition: all 0.2s;
+            }
+            .modal-close:hover {
+                border-color: var(--text-muted);
+                color: var(--text);
+            }
+            .modal-body {
+                padding: 24px;
+                overflow-y: auto;
+                flex: 1;
+                font-family: var(--font-mono);
+                font-size: 13px;
+                line-height: 1.8;
+                color: var(--text-secondary);
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+            .modal-body h1 { font-size: 22px; font-weight: 700; color: var(--text); margin: 24px 0 12px; font-family: var(--font-sans); }
+            .modal-body h2 { font-size: 17px; font-weight: 600; color: var(--accent); margin: 28px 0 12px; font-family: var(--font-sans); }
+            .modal-body h3 { font-size: 15px; font-weight: 600; color: var(--text); margin: 20px 0 8px; font-family: var(--font-sans); }
+            .modal-body p { margin: 8px 0; }
+            .modal-body blockquote { border-left: 3px solid var(--accent-dim); padding-left: 16px; color: var(--text-muted); margin: 12px 0; }
+            .modal-body strong { color: var(--text); font-weight: 600; }
+            .modal-body table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 12px; }
+            .modal-body th, .modal-body td { border: 1px solid var(--border); padding: 8px 12px; text-align: left; }
+            .modal-body th { background: var(--bg-elevated); color: var(--text); font-weight: 600; }
+            .modal-body code { background: var(--bg-elevated); padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+            .modal-body pre { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0; }
+            .modal-body pre code { background: none; padding: 0; }
+            .modal-body ul, .modal-body ol { padding-left: 20px; margin: 8px 0; }
+            .modal-body li { margin: 4px 0; }
+            .modal-loading {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 60px;
+                color: var(--text-muted);
+                font-family: var(--font-sans);
+                font-size: 14px;
+            }
+            @media (max-width: 600px) {
+                .modal { max-height: 90vh; border-radius: 12px; }
+                .modal-body { padding: 16px; font-size: 12px; }
             }
 
             /* ========== FEATURES ========== */
@@ -1187,9 +1286,9 @@
                         <h3>Search by topic or book</h3>
                         <p>
                             The agent searches by theme, category, or specific
-                            book. A lightweight TF-IDF engine ranks results by
-                            relevance — tags, titles, and content are all
-                            indexed.
+                            book. Hybrid search (full-text + vector embeddings)
+                            ranks results by relevance — tags, titles, and
+                            content are all indexed.
                         </p>
                     </div>
                     <div class="step reveal">
@@ -1211,69 +1310,52 @@
             <div class="container">
                 <div class="catalog-header reveal">
                     <div>
-                        <div class="section-label">Catalog</div>
-                        <div class="section-title">8 books and growing</div>
+                        <div class="section-label">Sample books</div>
+                        <div class="section-title">See what agents get</div>
+                        <div class="section-desc">Click a book to preview the structured summary an agent receives.</div>
                     </div>
-                    <a
-                        href="https://github.com/danpalmieri/books-for-agents/tree/main/books"
-                        target="_blank"
-                        class="btn btn-secondary"
-                        style="font-size: 13px; padding: 8px 16px"
-                        >Browse all books</a
-                    >
                 </div>
                 <div class="catalog-grid">
-                    <div class="book-card reveal">
-                        <svg class="book-icon" style="color:#f0a050" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-                        <span class="book-tag tag-business">Business</span>
-                        <h4>How to Win Friends and Influence People</h4>
-                        <div class="author">Dale Carnegie</div>
-                    </div>
-                    <div class="book-card reveal">
-                        <svg class="book-icon" style="color:#f0a050" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-                        <span class="book-tag tag-business">Business</span>
-                        <h4>The Lean Startup</h4>
-                        <div class="author">Eric Ries</div>
-                    </div>
-                    <div class="book-card reveal">
-                        <svg class="book-icon" style="color:#ce93d8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-                        <span class="book-tag tag-psychology">Psychology</span>
-                        <h4>Thinking, Fast and Slow</h4>
-                        <div class="author">Daniel Kahneman</div>
-                    </div>
-                    <div class="book-card reveal">
+                    <div class="book-card reveal" onclick="openBook('atomic-habits')">
                         <svg class="book-icon" style="color:#ce93d8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-psychology">Psychology</span>
                         <h4>Atomic Habits</h4>
                         <div class="author">James Clear</div>
                     </div>
-                    <div class="book-card reveal">
-                        <svg class="book-icon" style="color:#7cacf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-                        <span class="book-tag tag-technology">Technology</span>
-                        <h4>The Pragmatic Programmer</h4>
-                        <div class="author">David Thomas & Andrew Hunt</div>
+                    <div class="book-card reveal" onclick="openBook('the-lean-startup')">
+                        <svg class="book-icon" style="color:#f0a050" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+                        <span class="book-tag tag-business">Business</span>
+                        <h4>The Lean Startup</h4>
+                        <div class="author">Eric Ries</div>
                     </div>
-                    <div class="book-card reveal">
+                    <div class="book-card reveal" onclick="openBook('clean-code')">
                         <svg class="book-icon" style="color:#7cacf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-technology">Technology</span>
                         <h4>Clean Code</h4>
                         <div class="author">Robert C. Martin</div>
                     </div>
-                    <div class="book-card reveal">
+                    <div class="book-card reveal" onclick="openBook('deep-work')">
                         <svg class="book-icon" style="color:#00d4aa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-self">Self-improvement</span>
                         <h4>Deep Work</h4>
                         <div class="author">Cal Newport</div>
                     </div>
-                    <div class="book-card reveal">
-                        <svg class="book-icon" style="color:#00d4aa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
-                        <span class="book-tag tag-self">Self-improvement</span>
-                        <h4>The 7 Habits of Highly Effective People</h4>
-                        <div class="author">Stephen R. Covey</div>
-                    </div>
                 </div>
             </div>
         </section>
+
+        <!-- BOOK MODAL -->
+        <div class="modal-overlay" id="book-modal" onclick="if(event.target===this)closeBook()">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title" id="modal-title">Loading...</div>
+                    <button class="modal-close" onclick="closeBook()">&times;</button>
+                </div>
+                <div class="modal-body" id="modal-body">
+                    <div class="modal-loading">Loading book content...</div>
+                </div>
+            </div>
+        </div>
 
         <!-- FEATURES -->
         <section class="features" id="features">
@@ -1323,8 +1405,8 @@
                         <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
                         <h3>Lightweight and fast</h3>
                         <p>
-                            No database, no API keys, no complex setup. Runs on
-                            Cloudflare Workers with 13ms startup. Request
+                            No API keys, no complex setup. Runs on Cloudflare
+                            Workers + D1 with instant cold starts. Request
                             specific sections to minimize token usage.
                         </p>
                     </div>
@@ -1347,18 +1429,18 @@
                         <p>
                             Already connected to Books for Agents? Just ask your agent
                             to generate the next book. It uses your tokens, creates the
-                            summary, and submits it as a GitHub Issue automatically.
+                            summary, and publishes it directly to the knowledge base.
                         </p>
                         <div class="contribute-cmd">
                             <code><span class="string">"Generate the next book from the backlog"</span></code>
                         </div>
-                        <div class="contribute-cost">22 books in the backlog &mdash; your agent does all the work</div>
+                        <div class="contribute-cost">No PRs, no reviews &mdash; your agent does all the work, the book goes live instantly</div>
                         <a
-                            href="https://github.com/danpalmieri/books-for-agents/blob/main/books/backlog.yml"
+                            href="https://github.com/danpalmieri/books-for-agents"
                             target="_blank"
                             class="btn btn-primary"
                         >
-                            View Backlog
+                            Get Started
                         </a>
                 </div>
             </div>
@@ -1463,6 +1545,69 @@
                     setTimeout(() => btn.classList.remove('copied'), 1500);
                 });
             }
+
+            // Book modal
+            const bookCache = {};
+
+            function mdToHtml(md) {
+                md = md.replace(/^---\n[\s\S]*?\n---\n*/, '');
+                md = md.replace(/\[\[([^\]]+)\]\]/g, '*$1*');
+                return marked.parse(md, { gfm: true, breaks: true });
+            }
+
+            async function openBook(slug) {
+                const modal = document.getElementById('book-modal');
+                const title = document.getElementById('modal-title');
+                const body = document.getElementById('modal-body');
+                modal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+
+                if (bookCache[slug]) {
+                    title.textContent = bookCache[slug].title;
+                    body.innerHTML = bookCache[slug].html;
+                    return;
+                }
+
+                title.textContent = 'Loading...';
+                body.innerHTML = '<div class="modal-loading">Loading book content...</div>';
+
+                try {
+                    const res = await fetch('https://booksforagents.com/mcp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            jsonrpc: '2.0',
+                            id: 1,
+                            method: 'tools/call',
+                            params: { name: 'get_book', arguments: { slug } }
+                        })
+                    });
+                    const data = await res.json();
+                    const content = JSON.parse(data.result.content[0].text);
+                    if (content.error) {
+                        title.textContent = 'Error';
+                        body.innerHTML = '<div class="modal-loading">' + content.error + '</div>';
+                        return;
+                    }
+                    const bookTitle = content.metadata?.title || slug;
+                    const html = mdToHtml(content.content || '');
+                    bookCache[slug] = { title: bookTitle, html };
+                    title.textContent = bookTitle;
+                    body.innerHTML = html;
+                } catch (err) {
+                    title.textContent = 'Error';
+                    body.innerHTML = '<div class="modal-loading">Failed to load book. Try again later.</div>';
+                }
+            }
+
+            function closeBook() {
+                document.getElementById('book-modal').classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeBook();
+            });
 
         </script>
     </body>
