@@ -12,6 +12,7 @@ import { getBook, getBookSection } from "./tools/get-book.js";
 import { listCategories } from "./tools/list-categories.js";
 import { generateBook, listBacklog, type BacklogEntry } from "./tools/generate-book.js";
 import { submitBook } from "./tools/submit-book.js";
+import { suggestBook } from "./tools/suggest-book.js";
 
 interface Env {
   GITHUB_TOKEN?: string;
@@ -141,6 +142,32 @@ const TOOLS = [
       required: ["slug", "title", "author", "category", "content"],
     },
   },
+  {
+    name: "suggest_book",
+    description:
+      "Suggest a new book to add to the generation backlog. Creates a GitHub Issue for maintainer review. Checks for duplicates against published books, backlog, and existing suggestions.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        title: { type: "string", description: "Book title" },
+        author: { type: "string", description: "Book author" },
+        category: {
+          type: "string",
+          enum: ["business", "psychology", "technology", "self-improvement"],
+          description: "Book category",
+        },
+        year: { type: "number", description: "Publication year" },
+        tags: {
+          type: "array",
+          items: { type: "string" },
+          description: "Relevant tags",
+        },
+        isbn: { type: "string", description: "ISBN" },
+        reason: { type: "string", description: "Why this book should be added" },
+      },
+      required: ["title", "author", "category"],
+    },
+  },
 ];
 
 // --- MCP Resource Definitions ---
@@ -197,6 +224,13 @@ function callTool(name: string, args: Record<string, unknown>, env: Env) {
     case "submit_book":
       return submitBook(
         args as { slug: string; title: string; author: string; category: string; content: string },
+        env.GITHUB_TOKEN || ""
+      );
+    case "suggest_book":
+      return suggestBook(
+        args as { title: string; author: string; category: string; year?: number; tags?: string[]; isbn?: string; reason?: string },
+        books,
+        backlog,
         env.GITHUB_TOKEN || ""
       );
     default:

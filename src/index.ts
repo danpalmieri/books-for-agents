@@ -14,6 +14,7 @@ import { getBook, getBookSection } from "./tools/get-book.js";
 import { listCategories } from "./tools/list-categories.js";
 import { generateBook, listBacklog, type BacklogEntry } from "./tools/generate-book.js";
 import { submitBook } from "./tools/submit-book.js";
+import { suggestBook } from "./tools/suggest-book.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -137,6 +138,27 @@ server.tool(
   async (input) => {
     const githubToken = process.env.GITHUB_TOKEN || "";
     const result = await submitBook(input, githubToken);
+    return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
+  }
+);
+
+server.tool(
+  "suggest_book",
+  "Suggest a new book to add to the generation backlog. Creates a GitHub Issue for maintainer review. Checks for duplicates against published books, backlog, and existing suggestions.",
+  {
+    title: z.string().describe("Book title"),
+    author: z.string().describe("Book author"),
+    category: z
+      .enum(["business", "psychology", "technology", "self-improvement"])
+      .describe("Book category"),
+    year: z.number().optional().describe("Publication year"),
+    tags: z.array(z.string()).optional().describe("Relevant tags"),
+    isbn: z.string().optional().describe("ISBN"),
+    reason: z.string().optional().describe("Why this book should be added"),
+  },
+  async (input) => {
+    const githubToken = process.env.GITHUB_TOKEN || "";
+    const result = await suggestBook(input, books, backlog, githubToken);
     return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
   }
 );

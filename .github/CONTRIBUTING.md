@@ -23,6 +23,7 @@ That's it — no cloning, no setup, no API keys needed.
 | `list_backlog` | See all pending books and their status |
 | `generate_book` | Get context to generate a specific book (or the next pending one) |
 | `submit_book` | Submit the generated summary as a GitHub Issue |
+| `suggest_book` | Suggest a new book to add to the backlog |
 
 ### Content guidelines
 
