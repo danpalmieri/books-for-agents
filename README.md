@@ -1,5 +1,7 @@
 # Books for Agents
 
+![Books for Agents](https://i.imgur.com/I9ndi9M.jpeg)
+
 An open source knowledge base of structured book summaries, optimized for consumption by LLMs and AI agents via **MCP (Model Context Protocol)**.
 
 Any AI agent can connect and retrieve book knowledge to enrich its responses.
