@@ -80,15 +80,18 @@ choose() {
 # ── JSON merge via Python ─────────────────────
 # Reads existing JSON config, adds books-for-agents entry under mcpServers,
 # preserves all other keys. Returns 0 on success, 1 if already exists, 2 on error.
+# Pass "stdio" as $2 to use npx mcp-remote (for Claude Desktop), or "url" for direct URL.
 merge_json_config() {
   local config_path="$1"
+  local transport_mode="${2:-url}"
 
-  $PYTHON - "$config_path" "$MCP_URL" "$SERVER_NAME" <<'PYEOF'
+  $PYTHON - "$config_path" "$MCP_URL" "$SERVER_NAME" "$transport_mode" <<'PYEOF'
 import json, sys, os
 
-config_path = sys.argv[1]
-mcp_url     = sys.argv[2]
-server_name = sys.argv[3]
+config_path    = sys.argv[1]
+mcp_url        = sys.argv[2]
+server_name    = sys.argv[3]
+transport_mode = sys.argv[4]
 
 # Read existing config or start fresh
 if os.path.exists(config_path):
@@ -110,7 +113,13 @@ if server_name in config["mcpServers"]:
     sys.exit(1)
 
 # Add the server
-config["mcpServers"][server_name] = {"url": mcp_url}
+if transport_mode == "stdio":
+    config["mcpServers"][server_name] = {
+        "command": "npx",
+        "args": ["-y", "mcp-remote", mcp_url]
+    }
+else:
+    config["mcpServers"][server_name] = {"url": mcp_url}
 
 # Write back
 os.makedirs(os.path.dirname(config_path) or ".", exist_ok=True)
@@ -149,12 +158,12 @@ install_claude_desktop() {
   info "Config file: $config_path"
 
   local result=0
-  merge_json_config "$config_path" || result=$?
+  merge_json_config "$config_path" "stdio" || result=$?
 
   case $result in
     0)
-      success "Added $SERVER_NAME to $config_path"
-      printf "\n  ${dim}Restart Claude Desktop to activate.${reset}\n"
+      success "Added $SERVER_NAME to $config_path (via npx mcp-remote)"
+      printf "\n  ${dim}Requires Node.js. Restart Claude Desktop to activate.${reset}\n"
       ;;
     1)
       warn "$SERVER_NAME is already configured in $config_path"

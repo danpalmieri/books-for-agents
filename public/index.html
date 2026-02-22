@@ -593,6 +593,8 @@
                 flex-direction: column;
                 gap: 12px;
                 cursor: pointer;
+                color: var(--text);
+                text-decoration: none;
             }
             .book-card:hover {
                 border-color: var(--accent-dim);
@@ -1402,11 +1404,12 @@
                                 <pre class="setup-cmd">{
   <span class="key">"mcpServers"</span>: {
     <span class="key">"books-for-agents"</span>: {
-      <span class="key">"url"</span>: <span class="string">"https://booksforagents.com/mcp"</span>
+      <span class="key">"command"</span>: <span class="string">"npx"</span>,
+      <span class="key">"args"</span>: [<span class="string">"-y"</span>, <span class="string">"mcp-remote"</span>, <span class="string">"https://booksforagents.com/mcp"</span>]
     }
   }
 }</pre>
-                                <button class="setup-copy" onclick="copySetup(this, '{\n  &quot;mcpServers&quot;: {\n    &quot;books-for-agents&quot;: {\n      &quot;url&quot;: &quot;https://booksforagents.com/mcp&quot;\n    }\n  }\n}')">
+                                <button class="setup-copy" onclick="copySetup(this, '{\n  &quot;mcpServers&quot;: {\n    &quot;books-for-agents&quot;: {\n      &quot;command&quot;: &quot;npx&quot;,\n      &quot;args&quot;: [&quot;-y&quot;, &quot;mcp-remote&quot;, &quot;https://booksforagents.com/mcp&quot;]\n    }\n  }\n}')">
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
                                 </button>
                             </div>
@@ -1534,30 +1537,30 @@
                     </div>
                 </div>
                 <div class="catalog-grid">
-                    <div class="book-card reveal" onclick="openBook('atomic-habits')">
+                    <a href="/books/atomic-habits" class="book-card reveal" onclick="event.preventDefault(); openBook('atomic-habits')">
                         <svg class="book-icon" style="color:#ce93d8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-psychology">Psychology</span>
                         <h4>Atomic Habits</h4>
                         <div class="author">James Clear</div>
-                    </div>
-                    <div class="book-card reveal" onclick="openBook('the-lean-startup')">
+                    </a>
+                    <a href="/books/the-lean-startup" class="book-card reveal" onclick="event.preventDefault(); openBook('the-lean-startup')">
                         <svg class="book-icon" style="color:#f0a050" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-business">Business</span>
                         <h4>The Lean Startup</h4>
                         <div class="author">Eric Ries</div>
-                    </div>
-                    <div class="book-card reveal" onclick="openBook('clean-code')">
+                    </a>
+                    <a href="/books/clean-code" class="book-card reveal" onclick="event.preventDefault(); openBook('clean-code')">
                         <svg class="book-icon" style="color:#7cacf8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-technology">Technology</span>
                         <h4>Clean Code</h4>
                         <div class="author">Robert C. Martin</div>
-                    </div>
-                    <div class="book-card reveal" onclick="openBook('deep-work')">
+                    </a>
+                    <a href="/books/deep-work" class="book-card reveal" onclick="event.preventDefault(); openBook('deep-work')">
                         <svg class="book-icon" style="color:#00d4aa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
                         <span class="book-tag tag-self">Self-improvement</span>
                         <h4>Deep Work</h4>
                         <div class="author">Cal Newport</div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </section>
@@ -1795,7 +1798,7 @@
             // Setup terminal tabs
             const hints = {
                 'auto-install': 'Works on macOS, Linux, and WSL. Detects your platform and configures automatically.',
-                'claude-desktop': 'Settings → Developer → Edit Config. Restart Claude Desktop after saving.',
+                'claude-desktop': 'Settings → Developer → Edit Config. Requires Node.js. Restart Claude Desktop after saving.',
                 'claude-code': 'Add --scope user for global access across all projects.',
                 'chatgpt': 'In ChatGPT desktop app: Settings → Tools & plugins → Add MCP server.',
                 'cursor': 'Save to .cursor/mcp.json in your project root. Restart Cursor.',

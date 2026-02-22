@@ -11,6 +11,9 @@ import { listCategories } from "./tools/list-categories.js";
 import { generateBook, listBacklog } from "./tools/generate-book.js";
 import { submitBook } from "./tools/submit-book.js";
 import { suggestBook } from "./tools/suggest-book.js";
+import { renderBookPage } from "./pages/book-detail.js";
+import { renderSitemap } from "./pages/sitemap.js";
+import { renderNotFoundPage } from "./pages/not-found.js";
 
 interface Env {
   DB: D1Database;
@@ -35,6 +38,26 @@ function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
     headers: { "Content-Type": "application/json", ...CORS_HEADERS },
+  });
+}
+
+function html(body: string, status = 200, cacheSeconds = 300, sCacheSeconds = 3600): Response {
+  return new Response(body, {
+    status,
+    headers: {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": `public, max-age=${cacheSeconds}, s-maxage=${sCacheSeconds}`,
+    },
+  });
+}
+
+function xml(body: string, cacheSeconds = 3600, sCacheSeconds = 86400): Response {
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": `public, max-age=${cacheSeconds}, s-maxage=${sCacheSeconds}`,
+    },
   });
 }
 
@@ -379,6 +402,24 @@ export default {
     // Session delete (stateless — always OK)
     if (request.method === "DELETE") {
       return new Response(null, { status: 200, headers: CORS_HEADERS });
+    }
+
+    const baseUrl = url.origin;
+
+    // Sitemap
+    if (request.method === "GET" && url.pathname === "/sitemap.xml") {
+      const slugs = await store.getAllSlugs();
+      return xml(renderSitemap(slugs, baseUrl));
+    }
+
+    // Book detail page
+    const bookMatch = url.pathname.match(/^\/books\/([a-z0-9-]+)$/);
+    if (request.method === "GET" && bookMatch) {
+      const book = await store.getBySlug(bookMatch[1]);
+      if (book) {
+        return html(renderBookPage(book, baseUrl));
+      }
+      return html(renderNotFoundPage(baseUrl), 404);
     }
 
     return json({ error: "Not found" }, 404);
