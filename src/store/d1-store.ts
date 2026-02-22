@@ -292,6 +292,15 @@ export class D1BookStore implements BookStore {
     return row ? rowToBook(row) : undefined;
   }
 
+  async getByAuthor(authorSubstring: string): Promise<Book[]> {
+    const pattern = `%${authorSubstring.toLowerCase()}%`;
+    const { results } = await this.db
+      .prepare("SELECT * FROM books WHERE LOWER(author) LIKE ? ORDER BY title")
+      .bind(pattern)
+      .all<BookRow>();
+    return results.map(rowToBook);
+  }
+
   async getAllBooks(): Promise<Book[]> {
     const { results } = await this.db
       .prepare("SELECT * FROM books ORDER BY title")
@@ -435,5 +444,13 @@ export class D1BookStore implements BookStore {
       .bind(status, contributor, title)
       .all();
     return result.success;
+  }
+
+  async getRecentBooksMeta(limit: number): Promise<{ slug: string; title: string; author: string; category: string }[]> {
+    const { results } = await this.db
+      .prepare("SELECT slug, title, author, category FROM books ORDER BY rowid DESC LIMIT ?")
+      .bind(limit)
+      .all<{ slug: string; title: string; author: string; category: string }>();
+    return results;
   }
 }

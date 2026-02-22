@@ -32,6 +32,7 @@ export function renderBookPage(book: Book, baseUrl: string): string {
   const title = escapeHtml(m.title);
   const author = escapeHtml(m.author);
   const catColor = categoryColor(m.category);
+  const rawMdEscaped = escapeHtml(book.content);
 
   // Render the full markdown content (strip the # Title since we show it in the header)
   const contentWithoutTitle = book.content.replace(/^# .+\n*/, "");
@@ -229,10 +230,98 @@ export function renderBookPage(book: Book, baseUrl: string): string {
     .footer-links { display: flex; gap: 24px; }
     .footer-links a { font-size: 13px; color: var(--text-secondary); }
 
+    /* View Markdown button */
+    .btn-view-md {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 16px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      background: var(--bg-elevated);
+      color: var(--text);
+      border: 1px solid var(--border-light);
+      transition: all 0.2s;
+    }
+    .btn-view-md:hover {
+      border-color: var(--text-muted);
+      background: var(--bg-surface);
+    }
+
+    /* Markdown modal */
+    .md-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+    .md-overlay.open { display: flex; }
+    .md-modal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 800px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    }
+    .md-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .md-modal-header span { font-size: 15px; font-weight: 600; }
+    .md-modal-actions { display: flex; gap: 8px; }
+    .md-btn-copy, .md-btn-close {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+    .md-btn-copy:hover, .md-btn-close:hover {
+      border-color: var(--text-muted);
+      color: var(--text);
+    }
+    .md-modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .md-modal-body pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+    }
+
     @media (max-width: 600px) {
       .book-header { padding: 32px 0 24px; }
       .book-header h1 { font-size: 24px; }
       .book-content { padding: 24px 0 48px; }
+      .md-modal { max-height: 90vh; border-radius: 12px; }
+      .md-modal-body { padding: 16px; }
+      .md-modal-body pre { font-size: 12px; }
     }
   </style>
 </head>
@@ -251,12 +340,30 @@ export function renderBookPage(book: Book, baseUrl: string): string {
       <div class="book-author">by ${author}</div>
       <div class="one-liner">${description}</div>
       ${tagsHtml ? `<div class="tags">${tagsHtml}</div>` : ""}
+      <button class="btn-view-md" onclick="document.getElementById('md-modal').classList.add('open');document.body.style.overflow='hidden'">View Markdown</button>
     </header>
 
     <main class="book-content">
       ${contentHtml}
     </main>
   </div>
+
+  <!-- Markdown modal -->
+  <div class="md-overlay" id="md-modal" onclick="if(event.target===this){this.classList.remove('open');document.body.style.overflow=''}">
+    <div class="md-modal">
+      <div class="md-modal-header">
+        <span>Raw Markdown</span>
+        <div class="md-modal-actions">
+          <button class="md-btn-copy" id="md-copy-btn" onclick="(function(b){var t=document.getElementById('raw-md').textContent;navigator.clipboard.writeText(t).then(function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy'},1500)})})(this)">Copy</button>
+          <button class="md-btn-close" onclick="document.getElementById('md-modal').classList.remove('open');document.body.style.overflow=''">&times;</button>
+        </div>
+      </div>
+      <div class="md-modal-body">
+        <pre id="raw-md">${rawMdEscaped}</pre>
+      </div>
+    </div>
+  </div>
+  <script>document.addEventListener('keydown',function(e){if(e.key==='Escape'){var m=document.getElementById('md-modal');if(m.classList.contains('open')){m.classList.remove('open');document.body.style.overflow=''}}});</script>
 
   <footer>
     <div class="container">

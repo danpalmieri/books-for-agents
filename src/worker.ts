@@ -11,6 +11,7 @@ import { listCategories } from "./tools/list-categories.js";
 import { generateBook, listBacklog } from "./tools/generate-book.js";
 import { submitBook } from "./tools/submit-book.js";
 import { suggestBook } from "./tools/suggest-book.js";
+import { listBooksByAuthor } from "./tools/list-books-by-author.js";
 import { renderBookPage } from "./pages/book-detail.js";
 import { renderSitemap } from "./pages/sitemap.js";
 import { renderNotFoundPage } from "./pages/not-found.js";
@@ -107,6 +108,18 @@ const TOOLS = [
         },
       },
       required: ["slug", "section"],
+    },
+  },
+  {
+    name: "list_books_by_author",
+    description:
+      "List all books by a specific author. Supports partial name matching (e.g. 'Clear' matches 'James Clear').",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        author: { type: "string", description: "Author name or partial name to search for" },
+      },
+      required: ["author"],
     },
   },
   {
@@ -231,6 +244,8 @@ async function callTool(name: string, args: Record<string, unknown>, store: Book
       return getBook(store, args as { slug?: string; title?: string });
     case "get_book_section":
       return getBookSection(store, args as { slug: string; section: "ideas" | "frameworks" | "quotes" | "connections" | "when-to-use" });
+    case "list_books_by_author":
+      return listBooksByAuthor(store, args as { author: string });
     case "list_categories":
       return listCategories(store);
     case "list_backlog":
@@ -405,6 +420,19 @@ export default {
     }
 
     const baseUrl = url.origin;
+
+    // Catalog API
+    if (request.method === "GET" && url.pathname === "/api/catalog") {
+      const books = await store.getRecentBooksMeta(100);
+      return new Response(JSON.stringify(books), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, max-age=300, s-maxage=3600",
+          ...CORS_HEADERS,
+        },
+      });
+    }
 
     // Sitemap
     if (request.method === "GET" && url.pathname === "/sitemap.xml") {

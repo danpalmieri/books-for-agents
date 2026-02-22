@@ -1107,6 +1107,56 @@
                 line-height: 1.5;
             }
 
+            /* ========== FOOTER CATALOG ========== */
+            .footer-catalog {
+                width: 100%;
+                margin-top: 24px;
+                padding-top: 24px;
+                border-top: 1px solid var(--border);
+            }
+            .footer-catalog h3 {
+                font-size: 14px;
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 16px;
+            }
+            .footer-catalog-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px 16px;
+            }
+            .footer-catalog-grid a {
+                display: flex;
+                align-items: baseline;
+                gap: 8px;
+                font-size: 13px;
+                color: var(--text-secondary);
+                line-height: 1.4;
+                padding: 3px 0;
+                transition: color 0.2s;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .footer-catalog-grid a:hover {
+                color: var(--accent-hover);
+            }
+            .footer-cat-tag {
+                display: inline-block;
+                padding: 1px 6px;
+                border-radius: 4px;
+                font-size: 10px;
+                font-weight: 500;
+                flex-shrink: 0;
+                border: 1px solid;
+            }
+            @media (max-width: 900px) {
+                .footer-catalog-grid { grid-template-columns: repeat(2, 1fr); }
+            }
+            @media (max-width: 600px) {
+                .footer-catalog-grid { grid-template-columns: 1fr 1fr; }
+            }
+
             /* ========== SCROLL ANIMATION ========== */
             .reveal {
                 opacity: 0;
@@ -1747,6 +1797,10 @@
                             >Contributing</a
                         >
                     </div>
+                    <div class="footer-catalog" id="footer-catalog" style="display:none">
+                        <h3>Browse all books</h3>
+                        <div class="footer-catalog-grid" id="footer-books"></div>
+                    </div>
                     <div class="footer-disclaimer">
                         All summaries are original analyses and structured insights, not reproductions of copyrighted content. Code is MIT licensed. Content is CC BY-SA 4.0.
                     </div>
@@ -1947,6 +2001,25 @@
                     timing.textContent = '';
                 }
             }
+
+            // Footer catalog
+            (async function loadFooterCatalog() {
+                try {
+                    const res = await fetch('/api/catalog');
+                    if (!res.ok) return;
+                    const books = await res.json();
+                    if (!books.length) return;
+                    const catClasses = { business: 'tag-business', psychology: 'tag-psychology', technology: 'tag-technology', 'self-improvement': 'tag-self' };
+                    const catLabels = { business: 'BIZ', psychology: 'PSY', technology: 'TECH', 'self-improvement': 'SELF' };
+                    const container = document.getElementById('footer-books');
+                    container.innerHTML = books.map(function(b) {
+                        const cls = catClasses[b.category] || 'tag-self';
+                        const label = catLabels[b.category] || b.category.slice(0, 4).toUpperCase();
+                        return '<a href="/books/' + b.slug + '" target="_blank"><span class="footer-cat-tag ' + cls + '">' + label + '</span>' + b.title + '</a>';
+                    }).join('');
+                    document.getElementById('footer-catalog').style.display = '';
+                } catch (e) {}
+            })();
 
         </script>
     </body>

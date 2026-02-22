@@ -16,6 +16,7 @@ export interface BookStore {
   search(query: string, category?: string, limit?: number): Promise<SearchResult[]>;
   getBySlug(slug: string): Promise<Book | undefined>;
   getByTitle(titleSubstring: string): Promise<Book | undefined>;
+  getByAuthor(authorSubstring: string): Promise<Book[]>;
   getAllBooks(): Promise<Book[]>;
   getAllSlugs(): Promise<string[]>;
   getCategories(): Promise<CategoryInfo[]>;
@@ -25,4 +26,5 @@ export interface BookStore {
   insertBook(book: Book): Promise<void>;
   insertBacklogEntry(entry: BacklogEntry): Promise<void>;
   updateBacklogStatus(title: string, status: string, contributor: string): Promise<boolean>;
+  getRecentBooksMeta(limit: number): Promise<{ slug: string; title: string; author: string; category: string }[]>;
 }
