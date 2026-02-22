@@ -19,7 +19,7 @@ function categoryColor(category: string): string {
   }
 }
 
-function renderSection(md: string): string {
+function renderMarkdown(md: string): string {
   // Convert [[slug]] wiki-links to anchor tags
   const processed = md.replace(/\[\[([a-z0-9-]+)\]\]/g, '<a href="/books/$1">$1</a>');
   return marked.parse(processed, { async: false }) as string;
@@ -33,17 +33,9 @@ export function renderBookPage(book: Book, baseUrl: string): string {
   const author = escapeHtml(m.author);
   const catColor = categoryColor(m.category);
 
-  const sections = [
-    { heading: "Key Ideas", content: book.sections.ideas },
-    { heading: "Frameworks and Models", content: book.sections.frameworks },
-    { heading: "Key Quotes", content: book.sections.quotes },
-    { heading: "Connections with Other Books", content: book.sections.connections },
-    { heading: "When to Use This Knowledge", content: book.sections.whenToUse },
-  ];
-
-  const sectionsHtml = sections
-    .map((s) => `<h2>${s.heading}</h2>\n${renderSection(s.content)}`)
-    .join("\n");
+  // Render the full markdown content (strip the # Title since we show it in the header)
+  const contentWithoutTitle = book.content.replace(/^# .+\n*/, "");
+  const contentHtml = renderMarkdown(contentWithoutTitle);
 
   const tagsHtml = m.tags.length > 0
     ? m.tags.map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join(" ")
@@ -262,7 +254,7 @@ export function renderBookPage(book: Book, baseUrl: string): string {
     </header>
 
     <main class="book-content">
-      ${sectionsHtml}
+      ${contentHtml}
     </main>
   </div>
 
