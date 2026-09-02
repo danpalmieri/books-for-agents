@@ -19,6 +19,7 @@ export interface BookStore {
   getByAuthor(authorSubstring: string): Promise<Book[]>;
   getAllBooks(): Promise<Book[]>;
   getAllSlugs(): Promise<string[]>;
+  getAllTitles(): Promise<{ slug: string; title: string }[]>;
   getCategories(): Promise<CategoryInfo[]>;
   getBacklog(): Promise<BacklogEntry[]>;
   getTemplate(): Promise<string>;

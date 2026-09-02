@@ -1,4 +1,5 @@
 import type { BookStore } from "../store/book-store.js";
+import { validateSuggestion } from "../utils/validation.js";
 
 export interface SuggestBookInput {
   title: string;
@@ -14,24 +15,35 @@ export async function suggestBook(
   input: SuggestBookInput,
   store: BookStore
 ): Promise<object> {
-  const titleLower = input.title.toLowerCase().trim();
+  const titleLower = (input.title ?? "").toLowerCase().trim();
 
-  // 1. Check published books
-  const allBooks = await store.getAllBooks();
-  const publishedMatch = allBooks.find(
-    (b) => b.metadata.title.toLowerCase() === titleLower
+  // 1. Reject obvious test artifacts and malformed metadata before any lookup
+  const errors = validateSuggestion(input);
+  if (errors.length > 0) {
+    return {
+      error: `Suggestion rejected: it does not look like a real book (${errors.length} problem${errors.length > 1 ? "s" : ""}).`,
+      problems: errors,
+      suggestion:
+        "Suggest a real, published book with its actual title, author and one of the supported categories.",
+    };
+  }
+
+  // 2. Check published books
+  const published = await store.getAllTitles();
+  const publishedMatch = published.find(
+    (b) => b.title.toLowerCase().trim() === titleLower
   );
   if (publishedMatch) {
     return {
-      error: `"${input.title}" already exists as a published book (slug: ${publishedMatch.metadata.slug}).`,
+      error: `"${input.title}" already exists as a published book (slug: ${publishedMatch.slug}).`,
       suggestion: "Use get_book or search_books to read it.",
     };
   }
 
-  // 2. Check backlog
+  // 3. Check backlog
   const backlog = await store.getBacklog();
   const backlogMatch = backlog.find(
-    (b) => b.title.toLowerCase() === titleLower
+    (b) => b.title.toLowerCase().trim() === titleLower
   );
   if (backlogMatch) {
     return {
@@ -40,10 +52,10 @@ export async function suggestBook(
     };
   }
 
-  // 3. Insert into backlog
+  // 4. Insert into backlog
   await store.insertBacklogEntry({
-    title: input.title,
-    author: input.author,
+    title: input.title.trim(),
+    author: input.author.trim(),
     year: input.year ?? 0,
     category: input.category,
     tags: input.tags ?? [],

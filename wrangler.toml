@@ -22,3 +22,16 @@ index_name = "books-search-index"
 
 [ai]
 binding = "AI"
+
+# Per-IP rate limits for the write tools. `period` supports 10 or 60 seconds.
+[[unsafe.bindings]]
+name = "SUBMIT_LIMITER"
+type = "ratelimit"
+namespace_id = "1001"
+simple = { limit = 3, period = 60 }
+
+[[unsafe.bindings]]
+name = "SUGGEST_LIMITER"
+type = "ratelimit"
+namespace_id = "1002"
+simple = { limit = 10, period = 60 }

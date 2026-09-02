@@ -2,6 +2,7 @@ import type { Book, BookMetadata } from "../types.js";
 import type { BacklogEntry } from "../tools/generate-book.js";
 import type { BookStore, SearchResult, CategoryInfo } from "./book-store.js";
 import { buildEmbeddingText, fuseScores } from "../utils/embeddings.js";
+import { parseBookFromContent } from "../utils/markdown-parser.js";
 import type { ScoredItem } from "../utils/embeddings.js";
 
 interface D1Database {
@@ -275,6 +276,40 @@ export class D1BookStore implements BookStore {
     return { indexed: books.length };
   }
 
+  /**
+   * Re-derive the cached `section_*` and `one_liner` columns from `content`,
+   * which is the source of truth. Needed after a parser change.
+   */
+  async resyncSections(): Promise<{ updated: number }> {
+    const { results } = await this.db
+      .prepare("SELECT slug, content FROM books")
+      .all<{ slug: string; content: string }>();
+
+    let updated = 0;
+    for (const row of results) {
+      const book = parseBookFromContent(row.content, row.slug);
+      await this.db
+        .prepare(
+          `UPDATE books SET one_liner = ?, section_ideas = ?, section_frameworks = ?,
+             section_quotes = ?, section_connections = ?, section_when_to_use = ?
+           WHERE slug = ?`
+        )
+        .bind(
+          book.oneLiner,
+          book.sections.ideas,
+          book.sections.frameworks,
+          book.sections.quotes,
+          book.sections.connections,
+          book.sections.whenToUse,
+          row.slug
+        )
+        .all();
+      updated++;
+    }
+
+    return { updated };
+  }
+
   async getBySlug(slug: string): Promise<Book | undefined> {
     const row = await this.db
       .prepare("SELECT * FROM books WHERE slug = ?")
@@ -313,6 +348,13 @@ export class D1BookStore implements BookStore {
       .prepare("SELECT slug FROM books ORDER BY slug")
       .all<{ slug: string }>();
     return results.map((r) => r.slug);
+  }
+
+  async getAllTitles(): Promise<{ slug: string; title: string }[]> {
+    const { results } = await this.db
+      .prepare("SELECT slug, title FROM books ORDER BY title")
+      .all<{ slug: string; title: string }>();
+    return results;
   }
 
   async getCategories(): Promise<CategoryInfo[]> {
