@@ -25,4 +25,4 @@ jobs:
         run: npx wrangler d1 migrations apply books-for-agents-db --local
 
       - name: Build worker (dry-run)
-        run: wrangler deploy --dry-run --outdir=dist-worker
+        run: npx wrangler deploy --dry-run --outdir=dist-worker
