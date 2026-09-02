@@ -41,11 +41,17 @@ jobs:
 
       - name: Reindex Vectorize embeddings
         run: |
-          status=$(curl -s -o response.json -w '%{http_code}' \
-            -X POST https://booksforagents.com/_admin/reindex \
-            -H "Authorization: Bearer ${{ secrets.ADMIN_TOKEN }}" \
-            -H "Content-Type: application/json")
-          echo "HTTP $status"
-          cat response.json
-          echo
-          test "$status" = "200"
+          # The new version needs a moment to propagate; without a retry the
+          # reindex can hit the previous one and fail an otherwise good deploy.
+          for attempt in 1 2 3; do
+            status=$(curl -s -o response.json -w '%{http_code}' \
+              -X POST https://booksforagents.com/_admin/reindex \
+              -H "Authorization: Bearer ${{ secrets.ADMIN_TOKEN }}" \
+              -H "Content-Type: application/json")
+            echo "attempt $attempt: HTTP $status"
+            cat response.json
+            echo
+            if [ "$status" = "200" ]; then exit 0; fi
+            sleep 10
+          done
+          exit 1
