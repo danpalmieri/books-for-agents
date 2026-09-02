@@ -41,6 +41,11 @@ jobs:
 
       - name: Reindex Vectorize embeddings
         run: |
-          curl -sf -X POST https://booksforagents.com/_admin/reindex \
+          status=$(curl -s -o response.json -w '%{http_code}' \
+            -X POST https://booksforagents.com/_admin/reindex \
             -H "Authorization: Bearer ${{ secrets.ADMIN_TOKEN }}" \
-            -H "Content-Type: application/json"
+            -H "Content-Type: application/json")
+          echo "HTTP $status"
+          cat response.json
+          echo
+          test "$status" = "200"

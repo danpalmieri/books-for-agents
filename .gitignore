@@ -6,3 +6,5 @@ generated/
 *.d.ts.map
 .DS_Store
 .wrangler/
+.dev.vars
+.dev.vars.*

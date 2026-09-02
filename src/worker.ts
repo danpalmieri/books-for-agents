@@ -405,8 +405,12 @@ export default {
       if (!env.ADMIN_TOKEN || auth !== `Bearer ${env.ADMIN_TOKEN}`) {
         return json({ error: "Unauthorized" }, 401);
       }
-      const result = await store.reindexVectors();
-      return json(result);
+      try {
+        return json(await store.reindexVectors());
+      } catch (err) {
+        // Without this the caller only sees an opaque 500.
+        return json({ error: "Reindex failed", detail: String(err) }, 500);
+      }
     }
 
     // Admin: rebuild the cached section columns from `content`
@@ -415,7 +419,11 @@ export default {
       if (!env.ADMIN_TOKEN || auth !== `Bearer ${env.ADMIN_TOKEN}`) {
         return json({ error: "Unauthorized" }, 401);
       }
-      return json(await store.resyncSections());
+      try {
+        return json(await store.resyncSections());
+      } catch (err) {
+        return json({ error: "Resync failed", detail: String(err) }, 500);
+      }
     }
 
     // Reject SSE polling — MCP clients expecting Streamable HTTP SSE will
