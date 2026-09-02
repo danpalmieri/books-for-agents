@@ -77,12 +77,17 @@ export async function generateBook(
     }
   }
 
-  // Check if book already exists in D1
+  // Check if book already exists in D1. Subtitles are dropped so the slug stays
+  // short and readable — "Building a Second Brain: A Proven Method to ..." would
+  // otherwise produce a 104-character slug, past the 64-byte Vectorize id limit.
   const slug = entry.title
+    .split(/[:–—]/)[0]
     .toLowerCase()
-    .replace(/['':]/g, "")
+    .replace(/['']/g, "")
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 64)
+    .replace(/-+$/g, "");
 
   const existingBook = await store.getBySlug(slug);
   if (existingBook) {

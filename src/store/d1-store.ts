@@ -66,6 +66,26 @@ interface BacklogRow {
   contributor: string | null;
 }
 
+/**
+ * Vectorize caps vector ids at 64 bytes, but slugs derive from book titles and
+ * can be longer. Fall back to a stable hash and carry the real slug in the
+ * vector metadata, so long-titled books stay searchable and their public URLs
+ * are free to keep the full slug.
+ */
+const MAX_VECTOR_ID_BYTES = 64;
+
+function vectorIdFor(slug: string): string {
+  if (new TextEncoder().encode(slug).length <= MAX_VECTOR_ID_BYTES) return slug;
+
+  // FNV-1a, 32 bits — deterministic so re-upserts replace rather than duplicate.
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < slug.length; i++) {
+    hash ^= slug.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return `${slug.slice(0, 48)}-${hash.toString(16).padStart(8, "0")}`;
+}
+
 function rowToBook(row: BookRow): Book {
   let tags: string[];
   try {
@@ -237,7 +257,8 @@ export class D1BookStore implements BookStore {
     });
 
     return vectorResults.matches.map((m) => ({
-      id: m.id,
+      // `id` is hashed for long slugs; metadata carries the real one.
+      id: (m.metadata?.slug as string | undefined) ?? m.id,
       score: m.score,
     }));
   }
@@ -262,9 +283,10 @@ export class D1BookStore implements BookStore {
       });
 
       const vectors = batch.map((book, idx) => ({
-        id: book.metadata.slug,
+        id: vectorIdFor(book.metadata.slug),
         values: resp.data[idx],
         metadata: {
+          slug: book.metadata.slug,
           title: book.metadata.title,
           category: book.metadata.category,
         },
@@ -450,9 +472,10 @@ export class D1BookStore implements BookStore {
       });
       await this.vectorize.upsert([
         {
-          id: book.metadata.slug,
+          id: vectorIdFor(book.metadata.slug),
           values: resp.data[0],
           metadata: {
+            slug: book.metadata.slug,
             title: book.metadata.title,
             category: book.metadata.category,
           },
