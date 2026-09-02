@@ -16,11 +16,41 @@ import { renderBookPage } from "./pages/book-detail.js";
 import { renderSitemap } from "./pages/sitemap.js";
 import { renderNotFoundPage } from "./pages/not-found.js";
 
+interface RateLimiter {
+  limit(options: { key: string }): Promise<{ success: boolean }>;
+}
+
 interface Env {
   DB: D1Database;
   VECTORIZE: Vectorize;
   AI: Ai;
   ADMIN_TOKEN?: string;
+  // Absent in local dev — rate limiting is then a no-op.
+  SUBMIT_LIMITER?: RateLimiter;
+  SUGGEST_LIMITER?: RateLimiter;
+}
+
+/** Per-IP budget for the write tools, keyed by tool name. */
+const WRITE_TOOL_LIMITS: Record<string, { binding: "SUBMIT_LIMITER" | "SUGGEST_LIMITER"; window: string }> = {
+  submit_book: { binding: "SUBMIT_LIMITER", window: "3 per minute" },
+  suggest_book: { binding: "SUGGEST_LIMITER", window: "10 per minute" },
+};
+
+async function checkWriteRateLimit(
+  toolName: string,
+  env: Env,
+  clientId: string
+): Promise<string | null> {
+  const rule = WRITE_TOOL_LIMITS[toolName];
+  if (!rule) return null;
+
+  const limiter = env[rule.binding];
+  if (!limiter) return null;
+
+  const { success } = await limiter.limit({ key: `${toolName}:${clientId}` });
+  if (success) return null;
+
+  return `Rate limit exceeded for ${toolName} (${rule.window}). Wait a minute before submitting again.`;
 }
 
 // --- CORS ---
@@ -150,7 +180,7 @@ const TOOLS = [
   {
     name: "submit_book",
     description:
-      "Publish a generated book summary directly to the knowledge base. Call this after generating content with generate_book.",
+      "Publish a generated book summary directly to the knowledge base. Call this after generating content with generate_book. Submissions are validated: the slug must be lowercase-hyphenated, the frontmatter complete with a supported category, all five sections present and substantive, at least one \"**Practical application:**\", a one-sentence summary, and every [[slug]] cross-reference must already exist. Rate limited to 3 per minute.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -172,7 +202,7 @@ const TOOLS = [
   {
     name: "suggest_book",
     description:
-      "Suggest a new book to add to the generation backlog. Inserts directly into the backlog. Checks for duplicates against published books and existing backlog entries.",
+      "Suggest a new book to add to the generation backlog. Inserts directly into the backlog. Must be a real, published book: title, author and category are validated, and duplicates against published books and existing backlog entries are rejected. Rate limited to 10 per minute.",
     inputSchema: {
       type: "object" as const,
       properties: {
@@ -283,7 +313,12 @@ interface JsonRpcResponse {
   error?: { code: number; message: string; data?: unknown };
 }
 
-async function handleMessage(msg: JsonRpcRequest, store: BookStore, env: Env): Promise<JsonRpcResponse | null> {
+async function handleMessage(
+  msg: JsonRpcRequest,
+  store: BookStore,
+  env: Env,
+  clientId: string
+): Promise<JsonRpcResponse | null> {
   // Notifications (no id) don't get responses
   if (msg.id === undefined || msg.id === null) return null;
 
@@ -319,6 +354,15 @@ async function handleMessage(msg: JsonRpcRequest, store: BookStore, env: Env): P
     case "tools/call": {
       const toolName = msg.params?.name as string;
       const toolArgs = (msg.params?.arguments ?? {}) as Record<string, unknown>;
+
+      const limited = await checkWriteRateLimit(toolName, env, clientId);
+      if (limited) {
+        return respond({
+          content: [{ type: "text", text: JSON.stringify({ error: limited }, null, 2) }],
+          isError: true,
+        });
+      }
+
       const result = await callTool(toolName, toolArgs, store);
       if (result === null) {
         return error(-32602, `Unknown tool: ${toolName}`);
@@ -365,6 +409,15 @@ export default {
       return json(result);
     }
 
+    // Admin: rebuild the cached section columns from `content`
+    if (request.method === "POST" && url.pathname === "/_admin/resync-sections") {
+      const auth = request.headers.get("Authorization");
+      if (!env.ADMIN_TOKEN || auth !== `Bearer ${env.ADMIN_TOKEN}`) {
+        return json({ error: "Unauthorized" }, 401);
+      }
+      return json(await store.resyncSections());
+    }
+
     // Reject SSE polling — MCP clients expecting Streamable HTTP SSE will
     // reconnect in a tight loop if we reply 200.  Return 405 so they stop.
     if (request.method === "GET" && url.pathname === "/mcp" && request.headers.get("Accept")?.includes("text/event-stream")) {
@@ -399,11 +452,12 @@ export default {
         );
       }
 
+      const clientId = request.headers.get("CF-Connecting-IP") ?? "unknown";
       const messages: JsonRpcRequest[] = Array.isArray(body) ? body : [body as JsonRpcRequest];
       const responses: JsonRpcResponse[] = [];
 
       for (const msg of messages) {
-        const res = await handleMessage(msg, store, env);
+        const res = await handleMessage(msg, store, env, clientId);
         if (res) responses.push(res);
       }
 

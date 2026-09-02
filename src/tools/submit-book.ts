@@ -1,5 +1,6 @@
 import type { BookStore } from "../store/book-store.js";
 import { parseBookFromContent } from "../utils/markdown-parser.js";
+import { validateSubmission } from "../utils/validation.js";
 
 export interface SubmitBookInput {
   slug: string;
@@ -25,6 +26,23 @@ export async function submitBook(
   // Parse markdown content into a Book object
   const book = parseBookFromContent(input.content, input.slug);
 
+  // Quality gate — nothing reaches the knowledge base without passing it
+  const published = await store.getAllTitles();
+  const allSlugs = published.map((b) => b.slug);
+  const errors = validateSubmission(input, book, {
+    existingSlugs: allSlugs,
+    existingTitles: published.map((b) => b.title.trim().toLowerCase()),
+  });
+
+  if (errors.length > 0) {
+    return {
+      error: `Submission rejected: it does not meet the content standards (${errors.length} problem${errors.length > 1 ? "s" : ""}).`,
+      problems: errors,
+      suggestion:
+        "Call generate_book to get the template, example and instructions, then resubmit a complete summary.",
+    };
+  }
+
   // Insert into D1
   await store.insertBook(book);
 
@@ -35,11 +53,6 @@ export async function submitBook(
   const backlog = await store.getBacklog();
   const pending = backlog.filter((b) => b.status === "pending");
 
-  // Find connections referenced in the new book that don't exist yet
-  const connectionSlugs = [...(book.content.matchAll(/\[\[([^\]]+)\]\]/g))].map((m) => m[1]);
-  const allSlugs = await store.getAllSlugs();
-  const missingSlugs = connectionSlugs.filter((s) => !allSlugs.includes(s) && s !== input.slug);
-
   const result: Record<string, unknown> = {
     success: true,
     slug: input.slug,
@@ -49,10 +62,6 @@ export async function submitBook(
 
   if (pending.length > 0) {
     result.nextAction = `There are ${pending.length} books pending in the backlog. Call generate_book() to generate the next one: "${pending[0].title}" by ${pending[0].author}.`;
-  }
-
-  if (missingSlugs.length > 0) {
-    result.suggestForBacklog = `The book you just published references ${missingSlugs.length} book(s) not yet in the knowledge base: ${missingSlugs.join(", ")}. Consider calling suggest_book to add them to the backlog.`;
   }
 
   return result;

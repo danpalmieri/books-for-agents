@@ -47,7 +47,23 @@ Books are stored in the D1 `books` table. Categories: business, psychology, tech
 - Content must be in English. Section headings are supported in both English and Portuguese.
 - Connections between books use `[[slug]]` format referencing existing books only.
 
+These standards are enforced server-side by `src/utils/validation.ts`, which every
+write tool runs before touching D1:
+
+- `validateSubmission` — slug shape, complete frontmatter, valid category, minimum
+  content and per-section length, one-sentence summary, "**Practical application:**",
+  duplicate titles, and `[[slug]]` cross-references that resolve to published books.
+- `validateSuggestion` — title/author/category sanity for backlog entries.
+- `testArtifactReason` — name heuristic for synthetic entries ("A Very Unique Test
+  Book XYZ123" by "Test Author"). Deliberately conservative: real titles containing
+  "test" (Test Driven Development, The Mom Test) must pass. Changes to the token
+  lists should be checked against the whole catalog for false positives.
+
+`submit_book` and `suggest_book` are additionally rate limited per IP (3/min and
+10/min) via the `SUBMIT_LIMITER` / `SUGGEST_LIMITER` bindings in `wrangler.toml`.
+
 ## Environment Variables
 
-- `ADMIN_TOKEN`: Required for the `/_admin/reindex` endpoint. Set as Cloudflare secret.
+- `ADMIN_TOKEN`: Required for the `/_admin/reindex` and `/_admin/resync-sections`
+  endpoints. Set as Cloudflare secret.
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`: GitHub Actions secrets for deployment.

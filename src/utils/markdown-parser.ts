@@ -43,24 +43,75 @@ function parseFrontmatter(raw: string): Record<string, unknown> {
   return frontmatter;
 }
 
-function extractSection(content: string, heading: string): string {
-  const regex = new RegExp(
-    `^## ${heading}\\s*\\n([\\s\\S]*?)(?=^## |$)`,
-    "m"
-  );
-  const match = content.match(regex);
-  return match ? match[1].trim() : "";
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-function extractSectionBilingual(content: string, en: string, pt: string): string {
-  return extractSection(content, en) || extractSection(content, pt);
+/**
+ * Accepted `## ` headings per section, canonical first. Summaries in the
+ * knowledge base predate the current template and use several spellings
+ * (`Connections` vs `Connections with Other Books`, `Key Frameworks` vs
+ * `Frameworks and Models`), plus the Portuguese variants.
+ */
+export const SECTION_HEADINGS = {
+  ideas: ["Key Ideas", "Core Ideas", "Principais Ideias"],
+  frameworks: [
+    "Frameworks and Models",
+    "Key Frameworks",
+    "Frameworks",
+    "Frameworks e Modelos",
+  ],
+  quotes: ["Key Quotes", "Quotes", "Citações-Chave"],
+  connections: [
+    "Connections with Other Books",
+    "Connections",
+    "Conexões com Outros Livros",
+  ],
+  whenToUse: [
+    "When to Use This Knowledge",
+    "When to Use This Book",
+    "When to Read This Book",
+    "When to Use",
+    "Quando Usar Este Conhecimento",
+  ],
+} as const;
+
+const ONE_LINER_HEADINGS = [
+  "One-sentence summary",
+  "One-Sentence Summary",
+  "One-line summary",
+  "Resumo em uma frase",
+];
+
+function extractSection(content: string, heading: string): string {
+  // Find the `## <heading>` line, then take everything up to the next `## `
+  // line. Anchoring the end with `$` would stop at the first line break under
+  // the `m` flag, which truncated every section to a single line.
+  const start = new RegExp(`^##[ \\t]+${escapeRegExp(heading)}[ \\t]*$`, "m").exec(content);
+  if (!start) return "";
+
+  const rest = content.slice(start.index + start[0].length);
+  const next = /^## /m.exec(rest);
+  return (next ? rest.slice(0, next.index) : rest).trim();
+}
+
+function extractAnySection(content: string, headings: readonly string[]): string {
+  for (const heading of headings) {
+    const section = extractSection(content, heading);
+    if (section) return section;
+  }
+  return "";
 }
 
 function extractOneLiner(content: string): string {
   const match = content.match(
-    />\s*\*\*(?:Resumo em uma frase|One-sentence summary):\*\*\s*(.*?)(?:\n|$)/
+    />\s*\*\*(?:Resumo em uma frase|One-sentence summary):\*\*\s*(.*?)(?:\n|$)/i
   );
-  return match ? match[1].trim() : "";
+  if (match) return match[1].trim();
+
+  // Older summaries put it in a dedicated section instead of a blockquote.
+  const section = extractAnySection(content, ONE_LINER_HEADINGS);
+  return section.split("\n")[0].trim();
 }
 
 export function parseBookFromContent(raw: string, slug: string): Book {
@@ -85,11 +136,11 @@ export function parseBookFromContent(raw: string, slug: string): Book {
     content,
     oneLiner: extractOneLiner(content),
     sections: {
-      ideas: extractSectionBilingual(content, "Key Ideas", "Principais Ideias"),
-      frameworks: extractSectionBilingual(content, "Frameworks and Models", "Frameworks e Modelos"),
-      quotes: extractSectionBilingual(content, "Key Quotes", "Citações-Chave"),
-      connections: extractSectionBilingual(content, "Connections with Other Books", "Conexões com Outros Livros"),
-      whenToUse: extractSectionBilingual(content, "When to Use This Knowledge", "Quando Usar Este Conhecimento"),
+      ideas: extractAnySection(content, SECTION_HEADINGS.ideas),
+      frameworks: extractAnySection(content, SECTION_HEADINGS.frameworks),
+      quotes: extractAnySection(content, SECTION_HEADINGS.quotes),
+      connections: extractAnySection(content, SECTION_HEADINGS.connections),
+      whenToUse: extractAnySection(content, SECTION_HEADINGS.whenToUse),
     },
   };
 }
